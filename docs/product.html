@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product — ZoeAfrica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#e63329;--green:#1a7a3c;--gold:#f5a623;--dark:#111827;--mid:#374151;--muted:#6b7280;--light:#f9fafb;--border:#e5e7eb;--white:#fff;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08)}
+body{font-family:'DM Sans',sans-serif;background:#f4f5f6;color:var(--dark);font-size:14px}
+a{text-decoration:none;color:inherit}
+
+/* Nav */
+.nav{background:var(--white);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.logo-mark span{font-family:'Playfair Display',serif;font-weight:900;font-size:24px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn{padding:8px 18px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--green);color:white;padding:12px 28px;font-size:15px}.btn-primary:hover{background:#156832}
+.btn-outline{background:white;color:var(--mid);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--green);color:var(--green)}
+.btn-icon{background:var(--white);border:1.5px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s}
+.btn-icon:hover{border-color:var(--red);background:#fef2f2}
+
+/* Breadcrumb */
+.breadcrumb{max-width:1200px;margin:0 auto;padding:14px 20px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.breadcrumb a{color:var(--muted)}.breadcrumb a:hover{color:var(--green)}
+.breadcrumb span{color:var(--dark);font-weight:500}
+
+/* Main layout */
+.product-layout{max-width:1200px;margin:0 auto;padding:0 20px 40px;display:grid;grid-template-columns:1fr 460px;gap:32px;align-items:start}
+
+/* Image gallery */
+.gallery{position:sticky;top:80px}
+.main-img-wrap{border-radius:var(--radius);overflow:hidden;background:var(--white);border:1px solid var(--border);aspect-ratio:1;position:relative;margin-bottom:12px}
+.main-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.main-img-wrap:hover img{transform:scale(1.04)}
+.main-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:120px}
+.badge-overlay{position:absolute;top:14px;left:14px}
+.badge-tag{background:var(--red);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:5px}
+.badge-tag.NEW{background:var(--green)}.badge-tag.HOT{background:var(--gold);color:var(--dark)}.badge-tag.DEAL{background:#7c3aed}
+.wishlist-overlay{position:absolute;top:14px;right:14px}
+.thumb-strip{display:flex;gap:8px}
+.thumb{width:64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;flex-shrink:0;background:var(--white)}
+.thumb:hover,.thumb.active{border-color:var(--green)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;background:var(--light)}
+
+/* Product info */
+.product-info{padding-top:4px}
+.product-category{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.product-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;line-height:1.2;margin-bottom:12px}
+.seller-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.seller-avatar{width:38px;height:38px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:15px}
+.seller-name{font-weight:600;font-size:13px}
+.seller-loc{font-size:11px;color:var(--muted)}
+.rating-row{display:flex;align-items:center;gap:6px;margin-bottom:16px}
+.stars{color:var(--gold);font-size:15px}
+.review-count{font-size:12px;color:var(--muted)}
+
+/* Price block */
+.price-block{background:var(--light);border-radius:8px;padding:16px;margin-bottom:20px}
+.price-main{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--dark)}
+.price-original{font-size:16px;color:var(--muted);text-decoration:line-through;margin-left:10px}
+.price-save{background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;margin-left:8px}
+.price-btc{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* Options */
+.option-group{margin-bottom:16px}
+.option-label{font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.option-chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--border);border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--green)}
+.chip.selected{border-color:var(--green);background:#f0fdf4;font-weight:600;color:var(--green)}
+.chip.oos{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+
+/* Quantity */
+.qty-wrap{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:7px;overflow:hidden;width:fit-content;margin-bottom:20px}
+.qty-btn{background:var(--light);border:none;width:38px;height:38px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.qty-btn:hover{background:#e5e7eb}
+.qty-val{width:48px;text-align:center;font-size:15px;font-weight:600;border-left:1px solid var(--border);border-right:1px solid var(--border);height:38px;line-height:38px}
+
+/* CTA buttons */
+.cta-row{display:flex;gap:10px;margin-bottom:20px}
+.btn-cart{flex:1;background:var(--dark);color:white;padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer;border:none;transition:background .2s}
+.btn-cart:hover{background:#1f2937}
+.btn-buy{flex:1;background:var(--green);color:white;padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer;border:none;transition:background .2s}
+.btn-buy:hover{background:#156832}
+
+/* Trust badges */
+.trust-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.trust-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid)}
+
+/* Description tabs */
+.desc-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px}
+.desc-tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.desc-tab.active{color:var(--dark);border-bottom-color:var(--green);font-weight:600}
+.desc-panel{display:none}.desc-panel.active{display:block}
+.desc-panel p{font-size:13px;line-height:1.8;color:var(--mid)}
+
+/* Reviews section */
+.review-card{padding:16px 0;border-bottom:1px solid var(--border)}
+.review-card:last-child{border-bottom:none}
+.review-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.review-avatar{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px}
+.review-name{font-weight:600;font-size:13px}
+.review-date{font-size:11px;color:var(--muted);margin-left:auto}
+.review-text{font-size:13px;color:var(--mid);line-height:1.6;margin-left:44px}
+
+/* Related products */
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:32px}
+.mini-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.mini-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.mini-card-img{aspect-ratio:1;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden}
+.mini-card-img img{width:100%;height:100%;object-fit:cover}
+.mini-card-info{padding:10px}
+.mini-card-title{font-size:12px;font-weight:500;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mini-card-price{font-size:14px;font-weight:700}
+
+/* Toast */
+.toast-bar{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--dark);color:white;padding:12px 18px;border-radius:8px;font-size:13px;animation:slideUp .3s ease;display:flex;align-items:center;gap:8px}
+.toast.success{border-left:4px solid var(--green)}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Skeleton */
+.skeleton{animation:shimmer 1.4s infinite linear;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:900px){.product-layout{grid-template-columns:1fr}.gallery{position:static}.related-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.cta-row{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="toast-bar" id="toastBar"></div>
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="/" class="logo-mark"><span style="color:var(--red)">Zoe</span><span style="color:var(--gold)">Africa</span></a>
+  <div class="nav-right">
+    <button class="btn btn-outline" onclick="window.history.back()">← Back</button>
+    <a href="/checkout.html"><button class="btn btn-outline">🛒 Cart (<span id="navCartCount">0</span>)</button></a>
+    <a href="/auth.html"><button class="btn btn-primary" style="padding:8px 18px;font-size:13px">Account</button></a>
+  </div>
+</nav>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <a href="/">Home</a> › <a href="/" id="breadCat">Products</a> › <span id="breadTitle">Loading…</span>
+</div>
+
+<!-- Content — shown after load -->
+<div id="productContent" style="display:none">
+  <div class="product-layout">
+
+    <!-- Gallery -->
+    <div class="gallery">
+      <div class="main-img-wrap">
+        <div id="mainImgPlaceholder" class="main-img-placeholder">🛍️</div>
+        <img id="mainImg" src="" alt="" style="display:none">
+        <div class="badge-overlay"><span id="badgeTag" class="badge-tag" style="display:none"></span></div>
+        <div class="wishlist-overlay">
+          <div class="btn-icon" id="wishBtn" onclick="toggleWish()">♡</div>
+        </div>
+      </div>
+      <div class="thumb-strip" id="thumbStrip"></div>
+    </div>
+
+    <!-- Info -->
+    <div class="product-info">
+      <div class="product-category" id="prodCategory">Category</div>
+      <h1 class="product-title" id="prodTitle">Loading…</h1>
+
+      <div class="seller-row">
+        <div class="seller-avatar" id="sellerAvatar">S</div>
+        <div>
+          <div class="seller-name" id="sellerName">Seller</div>
+          <div class="seller-loc" id="sellerLoc">📍 Africa</div>
+        </div>
+        <a href="#" style="margin-left:auto;font-size:12px;color:var(--green);font-weight:600">Visit Shop →</a>
+      </div>
+
+      <div class="rating-row">
+        <span class="stars" id="prodStars">★★★★★</span>
+        <span id="prodRating">5.0</span>
+        <span class="review-count" id="prodReviews">(0 reviews)</span>
+        <span style="color:var(--border);margin:0 4px">|</span>
+        <span style="font-size:12px;color:var(--green)">✓ Verified Seller</span>
+      </div>
+
+      <div class="price-block">
+        <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px">
+          <span class="price-main" id="prodPrice">KES 0</span>
+          <span class="price-original" id="prodOriginal" style="display:none"></span>
+          <span class="price-save" id="prodSave" style="display:none"></span>
+        </div>
+        <div class="price-btc" id="prodBtc">≈ loading BTC…</div>
+      </div>
+
+      <!-- Size options (shown if applicable) -->
+      <div class="option-group" id="sizeGroup" style="display:none">
+        <div class="option-label">Size</div>
+        <div class="option-chips" id="sizeChips"></div>
+      </div>
+
+      <!-- Color options -->
+      <div class="option-group" id="colorGroup" style="display:none">
+        <div class="option-label">Color</div>
+        <div class="option-chips" id="colorChips"></div>
+      </div>
+
+      <!-- Quantity -->
+      <div class="option-label" style="margin-bottom:8px">Quantity</div>
+      <div class="qty-wrap">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-val" id="qtyVal">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn-cart" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="btn-buy" onclick="buyNow()">⚡ Buy Now</button>
+      </div>
+
+      <div class="trust-row">
+        <div class="trust-badge">🛡️ Buyer Protection</div>
+        <div class="trust-badge">📦 <span id="prodShipping">Free Shipping</span></div>
+        <div class="trust-badge">↩️ Easy Returns</div>
+        <div class="trust-badge">🔒 Secure Payment</div>
+      </div>
+
+      <!-- Description tabs -->
+      <div class="desc-tabs">
+        <div class="desc-tab active" onclick="switchDesc('desc')">Description</div>
+        <div class="desc-tab" onclick="switchDesc('shipping')">Shipping</div>
+        <div class="desc-tab" onclick="switchDesc('reviews')">Reviews</div>
+      </div>
+
+      <div class="desc-panel active" id="desc-desc">
+        <p id="prodDesc">Loading description…</p>
+      </div>
+      <div class="desc-panel" id="desc-shipping">
+        <p>✅ Free shipping on all orders over KES 2,000<br>
+        📦 Standard delivery: 2–5 business days within Kenya<br>
+        🌍 International shipping available — calculated at checkout<br>
+        ↩️ Returns accepted within 14 days of delivery<br>
+        💳 Payments via M-Pesa, Paystack, Bitcoin, or card</p>
+      </div>
+      <div class="desc-panel" id="desc-reviews">
+        <div id="reviewsList">
+          <div class="review-card">
+            <div class="review-top"><div class="review-avatar">G</div><div class="review-name">Grace A.</div><span class="stars" style="font-size:12px">★★★★★</span><div class="review-date">2 days ago</div></div>
+            <div class="review-text">Beautiful quality, exactly as described. Fast shipping!</div>
+          </div>
+          <div class="review-card">
+            <div class="review-top"><div class="review-avatar">K</div><div class="review-name">Kwame O.</div><span class="stars" style="font-size:12px">★★★★☆</span><div class="review-date">1 week ago</div></div>
+            <div class="review-text">Great craftsmanship, very satisfied with the purchase.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Related products -->
+  <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+    <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:16px">You May Also Like</h2>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+</div>
+
+<!-- Skeleton loader -->
+<div id="productSkeleton" style="max-width:1200px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr 460px;gap:32px">
+  <div>
+    <div class="skeleton" style="aspect-ratio:1;border-radius:10px;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px">${Array(4).fill('<div class="skeleton" style="width:64px;height:64px;border-radius:8px"></div>').join("")}</div>
+  </div>
+  <div style="padding-top:4px">${["40px","60%","30px","40%","80px","50px","120px"].map(h=>`<div class="skeleton" style="height:${h};margin-bottom:16px;width:100%"></div>`).join("")}</div>
+</div>
+
+<script>
+const API   = "http://localhost:5000/api";
+const token = localStorage.getItem("za_token");
+let cart    = JSON.parse(localStorage.getItem("za_cart") || "[]");
+let qty     = 1;
+let product = null;
+let wished  = false;
+
+// Update cart count
+document.getElementById("navCartCount").textContent = cart.reduce((s,i)=>s+(i.qty||1),0) || 0;
+
+// ─── Get product ID from URL ──────────────────────────────────────────────────
+const productId = new URLSearchParams(window.location.search).get("id");
+if (!productId) { window.location.href = "/"; }
+
+// ─── Load product ─────────────────────────────────────────────────────────────
+async function loadProduct() {
+  try {
+    const res  = await fetch(`${API}/products/${productId}`);
+    const data = await res.json();
+    if (!data.success) { window.location.href = "/"; return; }
+    product = data.product;
+    renderProduct(product);
+    loadRelated(product.category);
+    fetchBtcPrice(product.price, product.currency);
+  } catch { window.location.href = "/"; }
+}
+
+function renderProduct(p) {
+  document.title = `${p.title} — ZoeAfrica`;
+  document.getElementById("breadTitle").textContent = p.title?.slice(0,30);
+  document.getElementById("breadCat").textContent   = p.category;
+  document.getElementById("prodCategory").textContent = p.category;
+  document.getElementById("prodTitle").textContent  = p.title;
+  document.getElementById("prodDesc").textContent   = p.description || "No description provided.";
+  document.getElementById("prodShipping").textContent = p.shipping || "Free Shipping";
+  document.getElementById("prodPrice").textContent  = `${p.currency} ${p.price?.toLocaleString()}`;
+
+  // Rating
+  const stars = Math.round(p.seller?.rating || 5);
+  document.getElementById("prodStars").textContent  = "★".repeat(stars) + "☆".repeat(5-stars);
+  document.getElementById("prodRating").textContent = (p.seller?.rating || 5).toFixed(1);
+  document.getElementById("prodReviews").textContent = `(${p.reviewCount || 0} reviews)`;
+
+  // Seller
+  document.getElementById("sellerAvatar").textContent = (p.seller?.name||"S")[0].toUpperCase();
+  document.getElementById("sellerName").textContent   = p.seller?.name || "Seller";
+  document.getElementById("sellerLoc").textContent    = "📍 " + (p.seller?.country || "Africa");
+
+  // Original price
+  if (p.originalPrice) {
+    document.getElementById("prodOriginal").textContent = `${p.currency} ${p.originalPrice.toLocaleString()}`;
+    document.getElementById("prodOriginal").style.display = "inline";
+    const saving = Math.round((1 - p.price/p.originalPrice) * 100);
+    document.getElementById("prodSave").textContent    = `Save ${saving}%`;
+    document.getElementById("prodSave").style.display  = "inline";
+  }
+
+  // Badge
+  if (p.badge) {
+    const bt = document.getElementById("badgeTag");
+    bt.textContent   = p.badge;
+    bt.className     = `badge-tag ${p.badge}`;
+    bt.style.display = "inline";
+  }
+
+  // Images
+  const imgs = p.images || [];
+  if (imgs.length) {
+    const mainImg = document.getElementById("mainImg");
+    mainImg.src   = imgs[0].url;
+    mainImg.alt   = imgs[0].alt || p.title;
+    mainImg.style.display = "block";
+    document.getElementById("mainImgPlaceholder").style.display = "none";
+
+    document.getElementById("thumbStrip").innerHTML = imgs.map((img, i) => `
+      <div class="thumb ${i===0?"active":""}" onclick="switchImg('${img.url}', this)">
+        <img src="${img.url}" alt="">
+      </div>`).join("");
+  }
+
+  document.getElementById("productSkeleton").style.display = "none";
+  document.getElementById("productContent").style.display  = "block";
+}
+
+function switchImg(url, el) {
+  document.getElementById("mainImg").src = url;
+  document.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+}
+
+// ─── Qty ──────────────────────────────────────────────────────────────────────
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(99, qty + delta));
+  document.getElementById("qtyVal").textContent = qty;
+}
+
+// ─── Cart ─────────────────────────────────────────────────────────────────────
+function addToCart() {
+  if (!token) { window.location.href = "/auth.html"; return; }
+  if (!product) return;
+  const existing = cart.find(i => i._id === product._id);
+  if (existing) existing.qty = (existing.qty||1) + qty;
+  else cart.push({ _id: product._id, title: product.title, price: product.price,
+    currency: product.currency, image: product.images?.[0]?.url || "", qty });
+  localStorage.setItem("za_cart", JSON.stringify(cart));
+  document.getElementById("navCartCount").textContent = cart.reduce((s,i)=>s+(i.qty||1),0);
+  showToast(`✅ ${qty}× "${product.title?.slice(0,24)}…" added to cart`);
+}
+
+function buyNow() {
+  addToCart();
+  window.location.href = "/checkout.html";
+}
+
+// ─── Wishlist ─────────────────────────────────────────────────────────────────
+function toggleWish() {
+  wished = !wished;
+  document.getElementById("wishBtn").textContent = wished ? "♥" : "♡";
+  document.getElementById("wishBtn").style.color = wished ? "var(--red)" : "";
+  showToast(wished ? "❤️ Added to wishlist" : "Removed from wishlist");
+}
+
+// ─── Description tabs ─────────────────────────────────────────────────────────
+function switchDesc(tab) {
+  document.querySelectorAll(".desc-tab").forEach((t,i)=>t.classList.toggle("active",["desc","shipping","reviews"][i]===tab));
+  document.querySelectorAll(".desc-panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById(`desc-${tab}`).classList.add("active");
+}
+
+// ─── BTC price ────────────────────────────────────────────────────────────────
+async function fetchBtcPrice(price, currency) {
+  try {
+    const res  = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
+    const data = await res.json();
+    const btcUsd = data.bitcoin.usd;
+    const priceUsd = currency === "USD" ? price : price / 130; // rough KES→USD
+    document.getElementById("prodBtc").textContent = `≈ ${(priceUsd/btcUsd).toFixed(6)} BTC`;
+  } catch { document.getElementById("prodBtc").textContent = ""; }
+}
+
+// ─── Related products ─────────────────────────────────────────────────────────
+async function loadRelated(category) {
+  try {
+    const res  = await fetch(`${API}/products?category=${encodeURIComponent(category)}&limit=4`);
+    const data = await res.json();
+    const related = (data.products||[]).filter(p=>p._id!==productId).slice(0,4);
+    document.getElementById("relatedGrid").innerHTML = related.map(p=>{
+      const img = p.images?.[0];
+      return `<div class="mini-card" onclick="window.location.href='/product.html?id=${p._id}'">
+        <div class="mini-card-img">${img?`<img src="${img.url}" alt="${p.title}">`:`<span>🛍️</span>`}</div>
+        <div class="mini-card-info">
+          <div class="mini-card-title">${p.title}</div>
+          <div class="mini-card-price">${p.currency} ${p.price?.toLocaleString()}</div>
+        </div>
+      </div>`;
+    }).join("") || `<p style="color:var(--muted);font-size:13px;grid-column:1/-1">No related products yet</p>`;
+  } catch {}
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const el = document.createElement("div");
+  el.className = "toast success";
+  el.textContent = msg;
+  document.getElementById("toastBar").appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+loadProduct();
+</script>
+</body>
+</html>
