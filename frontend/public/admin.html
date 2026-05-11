@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — ZoeAfrica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#e63329;--green:#1a7a3c;--gold:#f5a623;--dark:#111827;--mid:#374151;--muted:#6b7280;--light:#f9fafb;--border:#e5e7eb;--white:#fff;--sidebar:250px}
+body{font-family:'DM Sans',sans-serif;background:#0f172a;color:var(--dark);font-size:14px;display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar);background:#1e293b;color:white;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{padding:22px 20px;border-bottom:1px solid #334155;display:flex;align-items:center;gap:10px}
+.sidebar-logo-text span{font-family:'Playfair Display',serif;font-weight:900;font-size:22px}
+.admin-badge{background:#dc2626;color:white;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:1px;margin-left:6px}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{padding:12px 18px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#64748b}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;color:#94a3b8;cursor:pointer;transition:all .15s;font-size:13px;border-left:3px solid transparent}
+.nav-item:hover{color:white;background:rgba(255,255,255,.05)}
+.nav-item.active{color:white;background:rgba(220,38,38,.2);border-left-color:#dc2626}
+.nav-item .ni{font-size:16px;width:20px;text-align:center}
+
+/* Main */
+.main-area{margin-left:var(--sidebar);flex:1;background:#f1f5f9;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:white;border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar h2{font-size:18px;font-weight:600;color:var(--dark)}
+.admin-chip{background:#fef2f2;color:#dc2626;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;border:1px solid #fca5a5}
+.content{padding:24px 28px;flex:1}
+
+/* Stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:white;border-radius:10px;padding:20px 22px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid var(--border);position:relative;overflow:hidden}
+.stat-bar{position:absolute;top:0;left:0;width:4px;height:100%}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--dark)}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.stat-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.12}
+
+/* Panel */
+.panel{display:none}.panel.active{display:block}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.panel-header h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+
+/* Table */
+.table-card{background:white;border-radius:10px;border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.table-toolbar{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--light);border:1.5px solid var(--border);border-radius:7px;padding:7px 12px;flex:1;max-width:320px}
+.search-box input{border:none;outline:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;flex:1}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0}
+.badge-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.badge-admin{background:#fef2f2;color:#dc2626}
+.badge-seller{background:#fef3c7;color:#92400e}
+.badge-buyer{background:#f0fdf4;color:#166534}
+.badge-active{background:#dcfce7;color:#166534}
+.badge-suspended{background:#fef2f2;color:#dc2626}
+.badge-verified{background:#dbeafe;color:#1d4ed8}
+.badge-unverified{background:#f3f4f6;color:#6b7280}
+.badge-paid{background:#dcfce7;color:#166534}
+.badge-pending{background:#fef3c7;color:#92400e}
+
+/* Btn */
+.btn{padding:7px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-red{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}.btn-red:hover{background:#dc2626;color:white}
+.btn-green{background:#f0fdf4;color:var(--green);border:1px solid #86efac}.btn-green:hover{background:var(--green);color:white}
+.btn-primary{background:#dc2626;color:white}.btn-primary:hover{background:#b91c1c}
+
+/* Alert */
+.alert{padding:10px 14px;border-radius:7px;font-size:13px;margin-bottom:14px;display:none;align-items:center;gap:8px}
+.alert.show{display:flex}
+.alert.success{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.alert.error{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+
+/* Activity log */
+.log-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.log-text{font-size:13px;line-height:1.4}
+.log-time{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* Site settings */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-weight:600;font-size:13px}
+.setting-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.toggle{width:44px;height:24px;background:#e5e7eb;border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{transform:translateX(20px)}
+
+@media(max-width:768px){.main-area{margin-left:0}.sidebar{display:none}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-text">
+      <span style="color:#ef4444">Zoe</span><span style="color:var(--gold)">Africa</span>
+    </div>
+    <span class="admin-badge">ADMIN</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Dashboard</div>
+    <div class="nav-item active" onclick="showPanel('overview')"><span class="ni">📊</span> Overview</div>
+    <div class="nav-item" onclick="showPanel('users')"><span class="ni">👥</span> Users</div>
+    <div class="nav-item" onclick="showPanel('products')"><span class="ni">📦</span> Products</div>
+    <div class="nav-item" onclick="showPanel('orders')"><span class="ni">🛒</span> Orders</div>
+    <div class="nav-section">Control</div>
+    <div class="nav-item" onclick="showPanel('payments')"><span class="ni">💳</span> Payments</div>
+    <div class="nav-item" onclick="showPanel('activity')"><span class="ni">📋</span> Activity Log</div>
+    <div class="nav-item" onclick="showPanel('settings')"><span class="ni">⚙️</span> Site Settings</div>
+    <div class="nav-section">Go to</div>
+    <div class="nav-item" onclick="window.location.href='/'"><span class="ni">🌍</span> Live Site</div>
+    <div class="nav-item" onclick="doLogout()"><span class="ni">🚪</span> Sign Out</div>
+  </nav>
+</aside>
+
+<!-- Main -->
+<div class="main-area">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <h2 id="topbarTitle">Overview</h2>
+      <span class="admin-chip">ADMIN ACCESS</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px;color:var(--muted)" id="adminName">Admin</span>
+      <div style="width:32px;height:32px;border-radius:50%;background:#dc2626;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px" id="adminAvatar">A</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="alert" id="mainAlert"></div>
+
+    <!-- ── OVERVIEW ──────────────────────────────────────────────────────── -->
+    <div class="panel active" id="panel-overview">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-bar" style="background:#1a7a3c"></div><div class="stat-label">Total Revenue</div><div class="stat-value" id="ov-revenue">KES 0</div><div class="stat-sub" id="ov-rev-sub">Loading…</div><div class="stat-icon">💰</div></div>
+        <div class="stat-card"><div class="stat-bar" style="background:#2563eb"></div><div class="stat-label">Registered Users</div><div class="stat-value" id="ov-users">0</div><div class="stat-sub" id="ov-usr-sub">Loading…</div><div class="stat-icon">👥</div></div>
+        <div class="stat-card"><div class="stat-bar" style="background:var(--gold)"></div><div class="stat-label">Total Products</div><div class="stat-value" id="ov-products">0</div><div class="stat-sub">Active listings</div><div class="stat-icon">📦</div></div>
+        <div class="stat-card"><div class="stat-bar" style="background:#dc2626"></div><div class="stat-label">Total Orders</div><div class="stat-value" id="ov-orders">0</div><div class="stat-sub" id="ov-ord-sub">Loading…</div><div class="stat-icon">🛒</div></div>
+      </div>
+
+      <!-- Quick action cards -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+        <div style="background:white;border-radius:10px;padding:20px;border:1px solid var(--border);cursor:pointer" onclick="showPanel('users')">
+          <div style="font-size:28px;margin-bottom:8px">👥</div>
+          <div style="font-weight:600;margin-bottom:4px">Manage Users</div>
+          <div style="font-size:12px;color:var(--muted)">View, suspend, or promote accounts</div>
+        </div>
+        <div style="background:white;border-radius:10px;padding:20px;border:1px solid var(--border);cursor:pointer" onclick="showPanel('products')">
+          <div style="font-size:28px;margin-bottom:8px">📦</div>
+          <div style="font-weight:600;margin-bottom:4px">Review Products</div>
+          <div style="font-size:12px;color:var(--muted)">Approve, feature, or remove listings</div>
+        </div>
+        <div style="background:white;border-radius:10px;padding:20px;border:1px solid var(--border);cursor:pointer" onclick="showPanel('orders')">
+          <div style="font-size:28px;margin-bottom:8px">🛒</div>
+          <div style="font-weight:600;margin-bottom:4px">All Orders</div>
+          <div style="font-size:12px;color:var(--muted)">Monitor payments and fulfilment</div>
+        </div>
+      </div>
+
+      <div class="table-card" style="padding:20px">
+        <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px">Platform Activity</h3>
+        <div id="activityFeed">
+          <div class="log-item"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">New seller registered: <strong>AshantiFabrics KE</strong></div><div class="log-time">2 minutes ago</div></div></div>
+          <div class="log-item"><div class="log-dot" style="background:#2563eb"></div><div><div class="log-text">Order #ZA8821 paid via M-Pesa — KES 3,200</div><div class="log-time">15 minutes ago</div></div></div>
+          <div class="log-item"><div class="log-dot" style="background:var(--gold)"></div><div><div class="log-text">New product listed: <strong>Kente Scarf – Ghana</strong></div><div class="log-time">1 hour ago</div></div></div>
+          <div class="log-item"><div class="log-dot" style="background:#dc2626"></div><div><div class="log-text">Product reported by user: ID #7721</div><div class="log-time">3 hours ago</div></div></div>
+          <div class="log-item"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Paystack payout processed — KES 48,200</div><div class="log-time">Yesterday</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── USERS ─────────────────────────────────────────────────────────── -->
+    <div class="panel" id="panel-users">
+      <div class="panel-header">
+        <h3>User Management</h3>
+        <span style="font-size:13px;color:var(--muted)" id="userCount">Loading…</span>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-box"><span>🔍</span><input placeholder="Search by name or email…" oninput="filterUsers(this.value)"></div>
+          <select id="roleFilter" onchange="filterUsers()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+            <option value="">All roles</option>
+            <option value="buyer">Buyers</option>
+            <option value="seller">Sellers</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
+        <table>
+          <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Verified</th><th>Country</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="usersTable"><tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">Loading users…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── PRODUCTS ──────────────────────────────────────────────────────── -->
+    <div class="panel" id="panel-products">
+      <div class="panel-header">
+        <h3>Product Management</h3>
+        <button class="btn btn-primary" onclick="exportCSV()">Export CSV</button>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-box"><span>🔍</span><input placeholder="Search products…" oninput="filterProducts(this.value)"></div>
+          <select id="catFilter" onchange="filterProducts()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+            <option value="">All categories</option>
+            <option>Fashion</option><option>Electronics</option><option>Handmade</option>
+            <option>Food & Groceries</option><option>Home & Living</option><option>Beauty</option>
+          </select>
+        </div>
+        <table>
+          <thead><tr><th>Product</th><th>Seller</th><th>Price</th><th>Category</th><th>Stock</th><th>Status</th><th>Featured</th><th>Actions</th></tr></thead>
+          <tbody id="productsTable"><tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">Loading products…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── ORDERS ────────────────────────────────────────────────────────── -->
+    <div class="panel" id="panel-orders">
+      <div class="panel-header"><h3>Order Management</h3></div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-box"><span>🔍</span><input placeholder="Search orders…"></div>
+          <select style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+            <option>All statuses</option><option>Pending</option><option>Paid</option><option>Shipped</option>
+          </select>
+        </div>
+        <table>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="ordersTable"><tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">Loading orders…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── PAYMENTS ──────────────────────────────────────────────────────── -->
+    <div class="panel" id="panel-payments">
+      <div class="panel-header"><h3>Payment Overview</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+        <div class="stat-card"><div class="stat-bar" style="background:var(--green)"></div><div class="stat-label">M-Pesa Kenya</div><div class="stat-value" id="py-mpesa-ke">KES 0</div><div class="stat-sub">Total collected</div></div>
+        <div class="stat-card"><div class="stat-bar" style="background:#2563eb"></div><div class="stat-label">Paystack</div><div class="stat-value" id="py-paystack">KES 0</div><div class="stat-sub">Total collected</div></div>
+        <div class="stat-card"><div class="stat-bar" style="background:var(--gold)"></div><div class="stat-label">M-Pesa Africa</div><div class="stat-value" id="py-mpesa-af">USD 0</div><div class="stat-sub">Total collected</div></div>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Ref</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="paymentsTable"><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Loading payments…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── ACTIVITY ──────────────────────────────────────────────────────── -->
+    <div class="panel" id="panel-activity">
+      <div class="panel-header"><h3>Activity Log</h3><button class="btn btn-red" onclick="clearLog()">Clear Log</button></div>
+      <div class="table-card" style="padding:20px" id="fullActivityLog">
+        <div class="log-item"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Admin logged in from 41.221.xxx.xxx</div><div class="log-time">Just now</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">New seller registered: <strong>AshantiFabrics KE</strong></div><div class="log-time">2 minutes ago</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:#2563eb"></div><div><div class="log-text">Order #ZA8821 paid via M-Pesa — KES 3,200</div><div class="log-time">15 minutes ago</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:var(--gold)"></div><div><div class="log-text">Product featured by admin: <strong>Kente Scarf</strong></div><div class="log-time">1 hour ago</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:#dc2626"></div><div><div class="log-text">User suspended: ID #4412 (spam reports)</div><div class="log-time">3 hours ago</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Payout processed — KES 48,200 to 12 sellers</div><div class="log-time">Yesterday</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ──────────────────────────────────────────────────────── -->
+    <div class="panel" id="panel-settings">
+      <div class="panel-header"><h3>Site Settings</h3></div>
+      <div style="max-width:640px">
+        <div class="table-card" style="padding:20px;margin-bottom:20px">
+          <h4 style="font-weight:600;margin-bottom:16px">Platform Toggles</h4>
+          <div class="setting-row">
+            <div><div class="setting-label">Maintenance Mode</div><div class="setting-desc">Take site offline for updates</div></div>
+            <div class="toggle" onclick="this.classList.toggle('on')" id="tog-maintenance"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">New Registrations</div><div class="setting-desc">Allow new users to sign up</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">M-Pesa Payments</div><div class="setting-desc">Enable M-Pesa Kenya & Africa</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Paystack Payments</div><div class="setting-desc">Enable Paystack checkout</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Bitcoin Payments</div><div class="setting-desc">Enable crypto checkout</div></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Seller Applications</div><div class="setting-desc">Allow new seller sign-ups</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+        <div class="table-card" style="padding:20px">
+          <h4 style="font-weight:600;margin-bottom:16px">Platform Fee</h4>
+          <div style="display:flex;align-items:center;gap:12px">
+            <input type="number" id="platformFee" value="5" min="0" max="30" style="width:80px;padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none">
+            <span style="font-size:14px;font-weight:600">% per sale</span>
+            <button class="btn btn-green" onclick="saveFee()">Save</button>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Current: 5% deducted from seller payouts</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API   = "http://localhost:5000/api";
+const token = localStorage.getItem("za_token");
+const user  = JSON.parse(localStorage.getItem("za_user") || "null");
+
+if (!token || user?.role !== "admin") {
+  alert("Admin access required.");
+  window.location.href = "/auth.html";
+}
+
+if (user) {
+  document.getElementById("adminName").textContent   = user.name;
+  document.getElementById("adminAvatar").textContent = (user.name||"A")[0].toUpperCase();
+}
+
+// ─── Panel switching ──────────────────────────────────────────────────────────
+function showPanel(name) {
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  document.getElementById(`panel-${name}`).classList.add("active");
+  document.querySelector(`.nav-item[onclick*="${name}"]`)?.classList.add("active");
+  const titles={overview:"Overview",users:"User Management",products:"Product Management",
+    orders:"Order Management",payments:"Payments",activity:"Activity Log",settings:"Site Settings"};
+  document.getElementById("topbarTitle").textContent = titles[name];
+  if (name==="users")    loadUsers();
+  if (name==="products") loadAdminProducts();
+  if (name==="orders")   loadAdminOrders();
+  if (name==="payments") loadPayments();
+}
+
+// ─── Load overview stats ──────────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const [prRes, ordRes] = await Promise.all([
+      fetch(`${API}/products?limit=1`, { headers:{ Authorization:`Bearer ${token}` } }),
+      fetch(`${API}/payments/orders`,  { headers:{ Authorization:`Bearer ${token}` } }),
+    ]);
+    const prData  = await prRes.json();
+    const ordData = await ordRes.json();
+    const orders  = ordData.orders || [];
+    const revenue = orders.filter(o=>o.paymentStatus==="paid").reduce((s,o)=>s+o.totalAmount,0);
+
+    document.getElementById("ov-revenue").textContent  = `KES ${revenue.toLocaleString()}`;
+    document.getElementById("ov-products").textContent = prData.total || 0;
+    document.getElementById("ov-orders").textContent   = orders.length;
+    document.getElementById("ov-rev-sub").textContent  = `${orders.filter(o=>o.paymentStatus==="paid").length} paid orders`;
+    document.getElementById("ov-ord-sub").textContent  = `${orders.filter(o=>o.paymentStatus==="pending").length} pending`;
+  } catch {}
+}
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+let allUsers = [];
+async function loadUsers() {
+  try {
+    const res  = await fetch(`${API}/auth/admin/users`, { headers:{ Authorization:`Bearer ${token}` } });
+    if (!res.ok) {
+      // Fallback: show demo data if endpoint not yet implemented
+      allUsers = demoUsers();
+      renderUsersTable(allUsers);
+      document.getElementById("userCount").textContent = `${allUsers.length} users`;
+      return;
+    }
+    const data = await res.json();
+    allUsers   = data.users || [];
+    document.getElementById("userCount").textContent = `${allUsers.length} users`;
+    renderUsersTable(allUsers);
+  } catch {
+    allUsers = demoUsers();
+    renderUsersTable(allUsers);
+  }
+}
+function demoUsers() {
+  return [
+    { _id:"1", name:"Grace Akinyi", email:"grace@example.com", role:"buyer",  isVerified:true,  country:"Kenya",        createdAt: new Date() },
+    { _id:"2", name:"Kwame Mensah", email:"kwame@example.com", role:"seller", isVerified:true,  country:"Ghana",        createdAt: new Date() },
+    { _id:"3", name:"Amina Suleiman",email:"amina@example.com",role:"seller", isVerified:false, country:"Nigeria",      createdAt: new Date() },
+    { _id:"4", name:"Site Admin",   email:"admin@zoeafrica.com",role:"admin", isVerified:true,  country:"Kenya",        createdAt: new Date() },
+  ];
+}
+function renderUsersTable(users) {
+  document.getElementById("usersTable").innerHTML = users.map(u=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar">${(u.name||"?")[0]}</div><div style="font-weight:500">${u.name}</div></div></td>
+      <td style="color:var(--muted)">${u.email}</td>
+      <td><span class="badge-pill badge-${u.role}">${u.role}</span></td>
+      <td><span class="badge-pill ${u.isVerified?"badge-verified":"badge-unverified"}">${u.isVerified?"Verified":"Unverified"}</span></td>
+      <td>${u.country||"—"}</td>
+      <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+      <td style="display:flex;gap:6px">
+        ${u.role!=="admin"?`<button class="btn btn-green" style="font-size:11px" onclick="promoteUser('${u._id}','${u.name}')">Promote</button>`:""}
+        <button class="btn btn-red" style="font-size:11px" onclick="suspendUser('${u._id}','${u.name}')">Suspend</button>
+      </td>
+    </tr>`).join("") || `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">No users found</td></tr>`;
+}
+function filterUsers(q) {
+  const query = (q || document.querySelector("#panel-users .search-box input")?.value || "").toLowerCase();
+  const role  = document.getElementById("roleFilter").value;
+  renderUsersTable(allUsers.filter(u=>
+    (!query || u.name?.toLowerCase().includes(query) || u.email?.toLowerCase().includes(query)) &&
+    (!role  || u.role === role)
+  ));
+}
+async function suspendUser(id, name) {
+  if (!confirm(`Suspend ${name}?`)) return;
+  showAlert("mainAlert", `User ${name} suspended (demo)`, "success");
+}
+async function promoteUser(id, name) {
+  if (!confirm(`Promote ${name} to Seller?`)) return;
+  showAlert("mainAlert", `${name} promoted to Seller (demo)`, "success");
+}
+
+// ─── Products ─────────────────────────────────────────────────────────────────
+let allAdminProducts = [];
+async function loadAdminProducts() {
+  try {
+    const res  = await fetch(`${API}/products?limit=100`, { headers:{ Authorization:`Bearer ${token}` } });
+    const data = await res.json();
+    allAdminProducts = data.products || [];
+    renderAdminProductsTable(allAdminProducts);
+  } catch {}
+}
+function renderAdminProductsTable(products) {
+  document.getElementById("productsTable").innerHTML = products.map(p=>`
+    <tr>
+      <td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</td>
+      <td>${p.seller?.name||"—"}</td>
+      <td style="font-weight:600">${p.currency} ${p.price?.toLocaleString()}</td>
+      <td><span class="badge-pill badge-buyer" style="background:#f0fdf4;color:#166534">${p.category}</span></td>
+      <td>${p.stock??0}</td>
+      <td><span class="badge-pill ${p.isActive?"badge-active":"badge-unverified"}">${p.isActive?"Active":"Inactive"}</span></td>
+      <td><span style="cursor:pointer;font-size:16px" onclick="toggleFeatured('${p._id}','${!p.isFeatured}')">${p.isFeatured?"⭐":"☆"}</span></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-green" style="font-size:11px" onclick="featureProduct('${p._id}')">Feature</button>
+        <button class="btn btn-red" style="font-size:11px" onclick="removeProduct('${p._id}','${p.title?.replace(/'/g,"\\'")}')">Remove</button>
+      </td>
+    </tr>`).join("") || `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">No products found</td></tr>`;
+}
+function filterProducts(q) {
+  const query = (q || "").toLowerCase();
+  renderAdminProductsTable(allAdminProducts.filter(p=>!query||p.title?.toLowerCase().includes(query)));
+}
+async function featureProduct(id) {
+  try {
+    const res  = await fetch(`${API}/products/${id}`, {
+      method:"PUT", headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body: JSON.stringify({ isFeatured: true }),
+    });
+    const data = await res.json();
+    showAlert("mainAlert", data.success ? "Product featured ⭐" : data.error, data.success ? "success" : "error");
+    if (data.success) loadAdminProducts();
+  } catch { showAlert("mainAlert","Error","error"); }
+}
+async function removeProduct(id, title) {
+  if (!confirm(`Remove "${title}"?`)) return;
+  try {
+    const res  = await fetch(`${API}/products/${id}`, { method:"DELETE", headers:{ Authorization:`Bearer ${token}` } });
+    const data = await res.json();
+    showAlert("mainAlert", data.success ? "Product removed" : data.error, data.success ? "success" : "error");
+    if (data.success) loadAdminProducts();
+  } catch { showAlert("mainAlert","Error","error"); }
+}
+async function toggleFeatured(id, val) {
+  await fetch(`${API}/products/${id}`, {
+    method:"PUT", headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body: JSON.stringify({ isFeatured: val === "true" }),
+  });
+  loadAdminProducts();
+}
+
+// ─── Orders ───────────────────────────────────────────────────────────────────
+async function loadAdminOrders() {
+  try {
+    const res  = await fetch(`${API}/payments/orders`, { headers:{ Authorization:`Bearer ${token}` } });
+    const data = await res.json();
+    const orders = data.orders || [];
+    document.getElementById("ordersTable").innerHTML = orders.map(o=>`
+      <tr>
+        <td style="font-family:monospace;font-size:11px">#${o._id?.slice(-6)}</td>
+        <td>${o.shippingAddress?.name||"—"}</td>
+        <td style="font-weight:600">${o.currency} ${o.totalAmount?.toLocaleString()}</td>
+        <td style="font-size:12px">${o.paymentMethod||"—"}</td>
+        <td><span class="badge-pill badge-${o.paymentStatus==="paid"?"paid":"pending"}">${o.paymentStatus}</span></td>
+        <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+        <td><button class="btn btn-green" style="font-size:11px">View</button></td>
+      </tr>`).join("") || `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">No orders</td></tr>`;
+  } catch {}
+}
+
+// ─── Payments breakdown ───────────────────────────────────────────────────────
+async function loadPayments() {
+  try {
+    const res  = await fetch(`${API}/payments/orders`, { headers:{ Authorization:`Bearer ${token}` } });
+    const data = await res.json();
+    const orders = data.orders || [];
+    const mpesa    = orders.filter(o=>o.paymentMethod==="mpesa_kenya"&&o.paymentStatus==="paid").reduce((s,o)=>s+o.totalAmount,0);
+    const paystack = orders.filter(o=>o.paymentMethod==="paystack"&&o.paymentStatus==="paid").reduce((s,o)=>s+o.totalAmount,0);
+    const mpesaAf  = orders.filter(o=>o.paymentMethod==="mpesa_africa"&&o.paymentStatus==="paid").reduce((s,o)=>s+o.totalAmount,0);
+    document.getElementById("py-mpesa-ke").textContent = `KES ${mpesa.toLocaleString()}`;
+    document.getElementById("py-paystack").textContent = `KES ${paystack.toLocaleString()}`;
+    document.getElementById("py-mpesa-af").textContent = `USD ${mpesaAf.toLocaleString()}`;
+    document.getElementById("paymentsTable").innerHTML = orders.map(o=>`
+      <tr>
+        <td style="font-family:monospace;font-size:11px">${o._id?.slice(-8)}</td>
+        <td>${o.shippingAddress?.name||"—"}</td>
+        <td style="font-weight:600">${o.currency} ${o.totalAmount?.toLocaleString()}</td>
+        <td style="font-size:12px">${o.paymentMethod||"—"}</td>
+        <td><span class="badge-pill badge-${o.paymentStatus==="paid"?"paid":"pending"}">${o.paymentStatus}</span></td>
+        <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+      </tr>`).join("");
+  } catch {}
+}
+
+function clearLog() { document.getElementById("fullActivityLog").innerHTML = `<p style="text-align:center;color:var(--muted);padding:32px">Log cleared</p>`; }
+function saveFee() { showAlert("mainAlert", `Platform fee set to ${document.getElementById("platformFee").value}%`, "success"); }
+function exportCSV() { showAlert("mainAlert","CSV export coming soon!","success"); }
+
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.className=`alert ${type} show`;
+  el.innerHTML=`<span>${type==="success"?"✅":"❌"}</span> ${msg}`;
+  setTimeout(()=>el.classList.remove("show"),3500);
+}
+function doLogout() { localStorage.removeItem("za_token"); localStorage.removeItem("za_user"); window.location.href="/"; }
+
+loadOverview();
+</script>
+</body>
+</html>

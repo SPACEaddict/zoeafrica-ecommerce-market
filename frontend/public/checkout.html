@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — ZoeAfrica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#e63329;--green:#1a7a3c;--gold:#f5a623;--dark:#111827;--mid:#374151;--muted:#6b7280;--light:#f9fafb;--border:#e5e7eb;--white:#fff;--radius:10px}
+body{font-family:'DM Sans',sans-serif;background:#f4f5f6;color:var(--dark);font-size:14px}
+
+/* Nav */
+.nav{background:var(--dark);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo-mark span{font-family:'Playfair Display',serif;font-weight:900;font-size:24px}
+.nav-steps{display:flex;align-items:center;gap:8px;font-size:12px;color:#6b7280}
+.nav-step{padding:4px 12px;border-radius:12px;font-weight:500}
+.nav-step.active{background:var(--green);color:white}
+.nav-step.done{color:#86efac}
+
+/* Layout */
+.checkout-layout{max-width:1100px;margin:32px auto;padding:0 20px;display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+
+/* Cards */
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:28px;margin-bottom:20px}
+.card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+
+/* Form */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,122,60,.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Payment method tabs */
+.pay-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px}
+.pay-method{border:1.5px solid var(--border);border-radius:8px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .15s}
+.pay-method:hover{border-color:var(--green)}
+.pay-method.active{border-color:var(--green);background:#f0fdf4}
+.pay-method .pm-icon{font-size:22px;margin-bottom:4px}
+.pay-method .pm-name{font-size:10px;font-weight:600;color:var(--mid)}
+.pay-method.active .pm-name{color:var(--green)}
+
+/* Payment panels */
+.pay-panel{display:none}
+.pay-panel.active{display:block}
+
+/* M-Pesa STK input */
+.phone-input-wrap{display:flex;border:1.5px solid var(--border);border-radius:7px;overflow:hidden;transition:border-color .15s}
+.phone-input-wrap:focus-within{border-color:var(--green)}
+.phone-prefix{background:var(--light);padding:0 12px;display:flex;align-items:center;font-size:14px;font-weight:500;color:var(--mid);border-right:1px solid var(--border);white-space:nowrap}
+.phone-input-wrap input{flex:1;border:none;outline:none;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:14px}
+
+/* STK waiting animation */
+.stk-waiting{text-align:center;padding:28px;display:none}
+.stk-waiting.show{display:block}
+.stk-phone-anim{font-size:56px;animation:ring .6s ease-in-out infinite alternate}
+@keyframes ring{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+.stk-waiting h4{font-size:16px;font-weight:600;margin:12px 0 6px}
+.stk-waiting p{font-size:13px;color:var(--muted)}
+.stk-progress{height:4px;background:#e5e7eb;border-radius:2px;margin:16px 0;overflow:hidden}
+.stk-fill{height:100%;background:var(--green);animation:stk-scan 2s ease-in-out infinite;border-radius:2px}
+@keyframes stk-scan{0%{width:0%}50%{width:100%}100%{width:0%}}
+.cancel-stk{background:none;border:1px solid var(--border);padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif}
+.cancel-stk:hover{color:var(--dark)}
+
+/* Paystack panel */
+.paystack-info{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:16px;margin-bottom:16px;font-size:13px;color:#166534}
+
+/* Country selector for M-Pesa Africa */
+.africa-countries{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.africa-country{border:1.5px solid var(--border);border-radius:7px;padding:10px 8px;cursor:pointer;text-align:center;transition:all .15s;font-size:12px}
+.africa-country:hover,.africa-country.selected{border-color:var(--green);background:#f0fdf4;color:var(--green);font-weight:600}
+
+/* Order summary */
+.order-summary{position:sticky;top:80px}
+.order-items{margin-bottom:16px}
+.order-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.order-item:last-child{border-bottom:none}
+.order-item-img{width:52px;height:52px;border-radius:6px;object-fit:cover;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden}
+.order-item-img img{width:100%;height:100%;object-fit:cover}
+.order-item-info{flex:1}
+.order-item-name{font-size:13px;font-weight:500;line-height:1.3}
+.order-item-qty{font-size:11px;color:var(--muted);margin-top:2px}
+.order-item-price{font-weight:700;font-size:13px;flex-shrink:0}
+.summary-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;color:var(--mid)}
+.summary-row.total{font-weight:700;font-size:16px;color:var(--dark);border-top:1px solid var(--border);margin-top:4px;padding-top:12px}
+
+/* Pay button */
+.pay-btn{width:100%;padding:14px;background:var(--green);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:background .2s;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.pay-btn:hover{background:#156832}
+.pay-btn:disabled{background:#9ca3af;cursor:not-allowed}
+
+/* Success screen */
+.success-screen{display:none;text-align:center;padding:48px 24px}
+.success-screen.show{display:block}
+.success-icon{font-size:72px;margin-bottom:20px;animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.success-screen h2{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:8px}
+.success-screen p{color:var(--muted);font-size:14px;line-height:1.6}
+.back-btn{display:inline-block;margin-top:20px;background:var(--green);color:white;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none;align-items:center;gap:8px}
+.alert.show{display:flex}
+.alert.error{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.alert.success{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+
+/* Security badges */
+.security-badges{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+.sec-badge{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
+
+@media(max-width:768px){.checkout-layout{grid-template-columns:1fr}.order-summary{position:static}.pay-methods{grid-template-columns:repeat(2,1fr)}.africa-countries{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo-mark">
+    <span style="color:var(--red)">Zoe</span><span style="color:var(--gold)">Africa</span>
+  </a>
+  <div class="nav-steps">
+    <span class="nav-step done">✓ Cart</span>
+    <span style="color:#374151">›</span>
+    <span class="nav-step active">Checkout</span>
+    <span style="color:#374151">›</span>
+    <span class="nav-step">Confirmation</span>
+  </div>
+</nav>
+
+<div class="checkout-layout" id="checkoutLayout">
+
+  <!-- LEFT: Forms -->
+  <div>
+
+    <!-- Shipping -->
+    <div class="card" id="shippingCard">
+      <h3>📦 Shipping Details</h3>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input id="sh-name" placeholder="Grace Akinyi"></div>
+        <div class="form-group"><label>Phone</label><input id="sh-phone" placeholder="+254712345678"></div>
+      </div>
+      <div class="form-group"><label>Street Address</label><input id="sh-addr" placeholder="123 Kimathi Street, CBD"></div>
+      <div class="form-row">
+        <div class="form-group"><label>City</label><input id="sh-city" placeholder="Nairobi"></div>
+        <div class="form-group">
+          <label>Country</label>
+          <select id="sh-country">
+            <option>Kenya</option><option>Nigeria</option><option>Ghana</option>
+            <option>South Africa</option><option>Ethiopia</option><option>Tanzania</option>
+            <option>Uganda</option><option>Rwanda</option><option>Senegal</option>
+            <option>Egypt</option><option>Morocco</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Notes (optional)</label><input id="sh-notes" placeholder="Leave at gate / call on arrival"></div>
+    </div>
+
+    <!-- Payment -->
+    <div class="card" id="paymentCard">
+      <h3>💳 Payment Method</h3>
+
+      <div class="pay-methods">
+        <div class="pay-method active" onclick="selectPay('mpesa-ke')">
+          <div class="pm-icon">📱</div>
+          <div class="pm-name">M-Pesa Kenya</div>
+        </div>
+        <div class="pay-method" onclick="selectPay('mpesa-africa')">
+          <div class="pm-icon">🌍</div>
+          <div class="pm-name">M-Pesa Africa</div>
+        </div>
+        <div class="pay-method" onclick="selectPay('paystack')">
+          <div class="pm-icon">💳</div>
+          <div class="pm-name">Paystack</div>
+        </div>
+        <div class="pay-method" onclick="selectPay('bitcoin')">
+          <div class="pm-icon">₿</div>
+          <div class="pm-name">Bitcoin</div>
+        </div>
+      </div>
+
+      <!-- M-Pesa Kenya panel -->
+      <div class="pay-panel active" id="panel-mpesa-ke">
+        <div class="alert" id="alert-mpesa-ke"></div>
+        <div id="stk-form">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+            You'll receive an <strong>M-Pesa STK push</strong> on your phone. Enter your PIN to complete payment.
+          </p>
+          <div class="form-group">
+            <label>M-Pesa Phone Number</label>
+            <div class="phone-input-wrap">
+              <span class="phone-prefix">🇰🇪 +254</span>
+              <input type="tel" id="ke-phone" placeholder="712 345 678" maxlength="9">
+            </div>
+          </div>
+        </div>
+        <div class="stk-waiting" id="stk-waiting">
+          <div class="stk-phone-anim">📱</div>
+          <h4>Check your phone!</h4>
+          <p>Enter your M-Pesa PIN on your phone to complete this payment</p>
+          <div class="stk-progress"><div class="stk-fill"></div></div>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Waiting for confirmation…</p>
+          <button class="cancel-stk" onclick="cancelSTK()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- M-Pesa Africa panel -->
+      <div class="pay-panel" id="panel-mpesa-africa">
+        <div class="alert" id="alert-mpesa-africa"></div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Select your country, then enter your M-Pesa number to receive a payment prompt.</p>
+        <div class="form-group"><label>Select Country</label></div>
+        <div class="africa-countries">
+          <div class="africa-country selected" onclick="selectAfricaCountry(this,'TZ')">🇹🇿 Tanzania</div>
+          <div class="africa-country" onclick="selectAfricaCountry(this,'MZ')">🇲🇿 Mozambique</div>
+          <div class="africa-country" onclick="selectAfricaCountry(this,'RW')">🇷🇼 Rwanda</div>
+          <div class="africa-country" onclick="selectAfricaCountry(this,'ET')">🇪🇹 Ethiopia</div>
+          <div class="africa-country" onclick="selectAfricaCountry(this,'GH')">🇬🇭 Ghana</div>
+          <div class="africa-country" onclick="selectAfricaCountry(this,'EG')">🇪🇬 Egypt</div>
+        </div>
+        <input type="hidden" id="africa-country" value="TZ">
+        <div class="form-group">
+          <label>M-Pesa Phone Number</label>
+          <div class="phone-input-wrap">
+            <span class="phone-prefix">+</span>
+            <input type="tel" id="africa-phone" placeholder="255712345678">
+          </div>
+        </div>
+      </div>
+
+      <!-- Paystack panel -->
+      <div class="pay-panel" id="panel-paystack">
+        <div class="paystack-info">
+          ✅ You'll be redirected to Paystack's secure payment page.<br>
+          Supports: <strong>Cards, Bank Transfer, USSD, Mobile Money</strong><br>
+          Currencies: NGN · GHS · ZAR · KES · EGP
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="paystack-currency">
+            <option value="NGN">NGN — Nigerian Naira</option>
+            <option value="GHS">GHS — Ghanaian Cedi</option>
+            <option value="ZAR">ZAR — South African Rand</option>
+            <option value="KES" selected>KES — Kenyan Shilling</option>
+            <option value="EGP">EGP — Egyptian Pound</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Bitcoin panel -->
+      <div class="pay-panel" id="panel-bitcoin">
+        <div class="paystack-info" style="background:#fffbeb;border-color:#fde68a;color:#92400e">
+          ₿ After clicking Pay, you'll receive a Bitcoin address and amount.<br>
+          The exchange rate is locked for <strong>15 minutes</strong>.
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">Powered by OpenNode • Confirmations required: 1</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: Order summary -->
+  <div class="order-summary">
+    <div class="card">
+      <h3>🧾 Order Summary</h3>
+      <div class="order-items" id="orderItems">
+        <!-- Populated by JS -->
+      </div>
+      <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">KES 0</span></div>
+      <div class="summary-row"><span>Shipping</span><span style="color:var(--green)">Free</span></div>
+      <div class="summary-row"><span>Tax (16% VAT)</span><span id="sumTax">KES 0</span></div>
+      <div class="summary-row total"><span>Total</span><span id="sumTotal">KES 0</span></div>
+
+      <div class="alert" id="alertMain"></div>
+
+      <button class="pay-btn" id="payBtn" onclick="doPay()">
+        <span id="payBtnText">Pay Now</span>
+      </button>
+
+      <div class="security-badges">
+        <span class="sec-badge">🔒 SSL Encrypted</span>
+        <span class="sec-badge">🛡️ Buyer Protected</span>
+        <span class="sec-badge">✅ PCI Compliant</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Screen -->
+<div class="success-screen" id="successScreen" style="max-width:520px;margin:60px auto;padding:0 20px">
+  <div class="success-icon">🎉</div>
+  <h2>Payment Confirmed!</h2>
+  <p>Your order has been placed successfully.<br>A confirmation email has been sent to you.</p>
+  <p style="margin-top:16px;font-size:12px;color:var(--muted)">Order ID: <strong id="confirmOrderId">—</strong></p>
+  <a href="/" class="back-btn">Continue Shopping →</a>
+</div>
+
+<script>
+const API   = "http://localhost:5000/api";
+const token = localStorage.getItem("za_token");
+let selectedMethod  = "mpesa-ke";
+let selectedAfricaCountry = "TZ";
+let stkPollInterval = null;
+let currentCheckoutRequestId = null;
+
+// ─── Redirect if not logged in ────────────────────────────────────────────────
+if (!token) { window.location.href = "/auth.html?tab=login"; }
+
+// ─── Load cart from localStorage ─────────────────────────────────────────────
+const cart = JSON.parse(localStorage.getItem("za_cart") || "[]");
+const currency = "KES";
+
+function renderOrderSummary() {
+  const itemsEl = document.getElementById("orderItems");
+  if (!cart.length) {
+    itemsEl.innerHTML = `<p style="color:var(--muted);text-align:center;padding:20px">Your cart is empty. <a href="/" style="color:var(--green)">Shop now →</a></p>`;
+    return;
+  }
+  itemsEl.innerHTML = cart.map(item => `
+    <div class="order-item">
+      <div class="order-item-img">
+        ${item.image ? `<img src="${item.image}" alt="${item.title}">` : "🛍️"}
+      </div>
+      <div class="order-item-info">
+        <div class="order-item-name">${item.title}</div>
+        <div class="order-item-qty">Qty: ${item.qty || 1}</div>
+      </div>
+      <div class="order-item-price">${currency} ${(item.price * (item.qty||1)).toLocaleString()}</div>
+    </div>`).join("");
+
+  const sub  = cart.reduce((s,i) => s + i.price * (i.qty||1), 0);
+  const tax  = Math.round(sub * 0.16);
+  const total = sub + tax;
+  document.getElementById("sumSubtotal").textContent = `${currency} ${sub.toLocaleString()}`;
+  document.getElementById("sumTax").textContent      = `${currency} ${tax.toLocaleString()}`;
+  document.getElementById("sumTotal").textContent    = `${currency} ${total.toLocaleString()}`;
+  document.getElementById("payBtnText").textContent  = `Pay ${currency} ${total.toLocaleString()}`;
+  window._orderTotal = total;
+}
+renderOrderSummary();
+
+// ─── Payment method selector ──────────────────────────────────────────────────
+function selectPay(method) {
+  selectedMethod = method;
+  document.querySelectorAll(".pay-method").forEach((el, i) => {
+    el.classList.toggle("active", ["mpesa-ke","mpesa-africa","paystack","bitcoin"][i] === method);
+  });
+  document.querySelectorAll(".pay-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById(`panel-${method}`).classList.add("active");
+}
+
+function selectAfricaCountry(el, code) {
+  document.querySelectorAll(".africa-country").forEach(c => c.classList.remove("selected"));
+  el.classList.add("selected");
+  selectedAfricaCountry = code;
+  document.getElementById("africa-country").value = code;
+}
+
+// ─── Shipping payload ─────────────────────────────────────────────────────────
+function getShipping() {
+  return {
+    name:    document.getElementById("sh-name").value.trim(),
+    phone:   document.getElementById("sh-phone").value.trim(),
+    address: document.getElementById("sh-addr").value.trim(),
+    city:    document.getElementById("sh-city").value.trim(),
+    country: document.getElementById("sh-country").value,
+    notes:   document.getElementById("sh-notes").value.trim(),
+  };
+}
+
+function validateShipping() {
+  const s = getShipping();
+  if (!s.name || !s.phone || !s.address || !s.city)
+    { showAlert("alertMain","Please fill in all shipping details","error"); return false; }
+  return true;
+}
+
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.className = `alert ${type} show`;
+  el.innerHTML = `<span>${type==="success"?"✅":"❌"}</span> ${msg}`;
+}
+function clearAlerts() {
+  document.querySelectorAll(".alert").forEach(el => el.classList.remove("show","error","success"));
+}
+
+function setPayBtn(loading, label) {
+  const btn = document.getElementById("payBtn");
+  btn.disabled = loading;
+  document.getElementById("payBtnText").textContent = loading ? "Processing…" : label || `Pay ${currency} ${(window._orderTotal||0).toLocaleString()}`;
+}
+
+const orderPayload = () => ({
+  items: cart.map(i => ({ product: i._id, title: i.title, price: i.price, currency, qty: i.qty||1, image: i.image||"" })),
+  shippingAddress: getShipping(),
+  currency,
+  totalAmount: window._orderTotal || 0,
+});
+
+// ─── MAIN PAY BUTTON ──────────────────────────────────────────────────────────
+async function doPay() {
+  clearAlerts();
+  if (!cart.length) { showAlert("alertMain","Your cart is empty","error"); return; }
+  if (!validateShipping()) return;
+
+  if (selectedMethod === "mpesa-ke")     await payMpesaKE();
+  else if (selectedMethod === "mpesa-africa") await payMpesaAfrica();
+  else if (selectedMethod === "paystack") await payPaystack();
+  else if (selectedMethod === "bitcoin")  await payBitcoin();
+}
+
+// ── M-Pesa Kenya STK Push ─────────────────────────────────────────────────────
+async function payMpesaKE() {
+  const rawPhone = document.getElementById("ke-phone").value.trim().replace(/\s/g,"");
+  if (!rawPhone) { showAlert("alert-mpesa-ke","Enter your M-Pesa phone number","error"); return; }
+  const phone = rawPhone.startsWith("0") ? "254" + rawPhone.slice(1) : "254" + rawPhone;
+
+  setPayBtn(true);
+  try {
+    const res  = await fetch(`${API}/payments/mpesa/stk`, {
+      method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body: JSON.stringify({ ...orderPayload(), phone, paymentMethod:"mpesa_kenya" }),
+    });
+    const data = await res.json();
+    if (!data.success) { showAlert("alert-mpesa-ke", data.error, "error"); setPayBtn(false); return; }
+
+    currentCheckoutRequestId = data.checkoutRequestId;
+    document.getElementById("stk-form").style.display    = "none";
+    document.getElementById("stk-waiting").classList.add("show");
+    setPayBtn(true, "Waiting for M-Pesa…");
+    startSTKPolling(data.checkoutRequestId, data.orderId);
+  } catch { showAlert("alert-mpesa-ke","Network error — try again","error"); setPayBtn(false); }
+}
+
+function startSTKPolling(checkoutRequestId, orderId) {
+  let attempts = 0;
+  stkPollInterval = setInterval(async () => {
+    attempts++;
+    if (attempts > 20) { clearInterval(stkPollInterval); showAlert("alert-mpesa-ke","Payment timed out — please try again","error"); cancelSTK(); return; }
+    try {
+      const res  = await fetch(`${API}/payments/mpesa/query`, {
+        method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+        body: JSON.stringify({ checkoutRequestId }),
+      });
+      const data = await res.json();
+      if (data.paid) { clearInterval(stkPollInterval); showSuccess(orderId); }
+    } catch {}
+  }, 3000);
+}
+
+function cancelSTK() {
+  clearInterval(stkPollInterval);
+  document.getElementById("stk-form").style.display    = "block";
+  document.getElementById("stk-waiting").classList.remove("show");
+  setPayBtn(false);
+}
+
+// ── M-Pesa Africa ─────────────────────────────────────────────────────────────
+async function payMpesaAfrica() {
+  const phone   = document.getElementById("africa-phone").value.trim();
+  const country = selectedAfricaCountry;
+  if (!phone) { showAlert("alert-mpesa-africa","Enter your M-Pesa phone number","error"); return; }
+
+  setPayBtn(true);
+  try {
+    const res  = await fetch(`${API}/payments/mpesa-africa/pay`, {
+      method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body: JSON.stringify({ ...orderPayload(), phone, country, paymentMethod:"mpesa_africa" }),
+    });
+    const data = await res.json();
+    if (!data.success) { showAlert("alert-mpesa-africa", data.error, "error"); setPayBtn(false); return; }
+    // M-Pesa Africa: webhook confirms async — show pending message
+    showAlert("alert-mpesa-africa","Payment initiated! You'll receive a prompt on your phone. Check your email for confirmation.","success");
+    setTimeout(() => showSuccess(data.orderId), 3000);
+  } catch { showAlert("alert-mpesa-africa","Network error","error"); setPayBtn(false); }
+}
+
+// ── Paystack ──────────────────────────────────────────────────────────────────
+async function payPaystack() {
+  const curr = document.getElementById("paystack-currency").value;
+  setPayBtn(true);
+  try {
+    const res  = await fetch(`${API}/payments/paystack/initialize`, {
+      method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body: JSON.stringify({ ...orderPayload(), currency: curr, paymentMethod:"paystack" }),
+    });
+    const data = await res.json();
+    if (!data.success) { showAlert("alertMain", data.error, "error"); setPayBtn(false); return; }
+    // Save reference so we can verify on return
+    localStorage.setItem("za_ps_ref", data.reference);
+    localStorage.setItem("za_order_id", data.orderId);
+    window.location.href = data.authorizationUrl;  // redirect to Paystack
+  } catch { showAlert("alertMain","Network error","error"); setPayBtn(false); }
+}
+
+// ── Bitcoin ───────────────────────────────────────────────────────────────────
+async function payBitcoin() {
+  showAlert("alertMain","Bitcoin checkout coming soon! Use M-Pesa or Paystack for now.","error");
+}
+
+// ─── Success screen ───────────────────────────────────────────────────────────
+function showSuccess(orderId) {
+  setPayBtn(false);
+  document.getElementById("checkoutLayout").style.display = "none";
+  const s = document.getElementById("successScreen");
+  s.classList.add("show");
+  document.getElementById("confirmOrderId").textContent = orderId || "—";
+  localStorage.removeItem("za_cart");
+  localStorage.removeItem("za_ps_ref");
+  localStorage.removeItem("za_order_id");
+}
+
+// ─── Paystack return verification ─────────────────────────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+const psRef = urlParams.get("reference") || localStorage.getItem("za_ps_ref");
+if (psRef && token) {
+  (async () => {
+    try {
+      const res  = await fetch(`${API}/payments/paystack/verify/${psRef}`,
+        { headers:{"Authorization":`Bearer ${token}`} });
+      const data = await res.json();
+      if (data.paid) showSuccess(localStorage.getItem("za_order_id"));
+    } catch {}
+  })();
+}
+</script>
+</body>
+</html>

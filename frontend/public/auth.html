@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In / Register — ZoeAfrica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#e63329;--green:#1a7a3c;--gold:#f5a623;--dark:#111827;--mid:#374151;--muted:#6b7280;--light:#f9fafb;--border:#e5e7eb;--white:#fff;--radius:12px}
+body{font-family:'DM Sans',sans-serif;background:#f0f4f0;min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+
+/* Nav */
+.nav{background:var(--dark);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo-mark span{font-family:'Playfair Display',serif;font-weight:900;font-size:24px}
+.nav-back{color:#9ca3af;font-size:13px;display:flex;align-items:center;gap:6px}
+.nav-back:hover{color:white}
+
+/* Layout */
+.auth-layout{flex:1;display:grid;grid-template-columns:1fr 480px;min-height:calc(100vh - 56px)}
+
+/* Left panel */
+.auth-left{background:linear-gradient(145deg,#0a1f0a 0%,#1a7a3c 55%,#2d9e56 100%);padding:60px 56px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.auth-left::before{content:'🌍';position:absolute;right:-20px;top:50%;transform:translateY(-50%);font-size:320px;opacity:.06;line-height:1}
+.auth-left-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#86efac;font-weight:600;margin-bottom:16px}
+.auth-left h1{font-family:'Playfair Display',serif;font-size:44px;font-weight:900;color:white;line-height:1.1;margin-bottom:20px}
+.auth-left h1 em{color:var(--gold);font-style:normal}
+.auth-left p{color:#d1fae5;font-size:15px;line-height:1.7;max-width:380px;margin-bottom:40px}
+.auth-features{display:flex;flex-direction:column;gap:16px}
+.auth-feat{display:flex;align-items:center;gap:14px}
+.feat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feat-text strong{display:block;color:white;font-size:13px;margin-bottom:2px}
+.feat-text span{color:#86efac;font-size:12px}
+
+/* Right panel */
+.auth-right{background:var(--white);display:flex;flex-direction:column;justify-content:center;padding:48px 44px;overflow-y:auto}
+
+/* Tabs */
+.auth-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:32px;gap:0}
+.auth-tab{flex:1;text-align:center;padding:12px;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.auth-tab.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* Forms */
+.auth-form{display:none}
+.auth-form.active{display:block}
+.auth-form h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:6px;color:var(--dark)}
+.auth-form .sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--mid);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s,box-shadow .15s;background:var(--white)}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,122,60,.1)}
+.input-wrap .eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Role selector */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.role-card{border:1.5px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .15s;text-align:center}
+.role-card:hover{border-color:var(--green)}
+.role-card.selected{border-color:var(--green);background:#f0fdf4}
+.role-card .role-icon{font-size:24px;margin-bottom:4px}
+.role-card .role-name{font-size:13px;font-weight:600;color:var(--dark)}
+.role-card .role-desc{font-size:11px;color:var(--muted)}
+
+/* Password strength */
+.strength-bar{height:4px;background:#e5e7eb;border-radius:2px;margin-top:6px;overflow:hidden}
+.strength-fill{height:100%;width:0%;transition:width .3s,background .3s;border-radius:2px}
+.strength-text{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* Submit button */
+.submit-btn{width:100%;padding:13px;background:var(--green);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:background .2s,transform .1s;margin-top:4px}
+.submit-btn:hover{background:#156832}
+.submit-btn:active{transform:scale(.99)}
+.submit-btn:disabled{background:#9ca3af;cursor:not-allowed}
+
+/* Social divider */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+.alert.show{display:flex;align-items:center;gap:8px}
+.alert.success{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.alert.error{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+
+/* Forgot password link */
+.forgot-link{font-size:12px;color:var(--green);cursor:pointer;text-align:right;display:block;margin-top:-8px;margin-bottom:16px}
+.forgot-link:hover{text-decoration:underline}
+
+/* Checkbox */
+.check-wrap{display:flex;align-items:flex-start;gap:10px;margin:12px 0}
+.check-wrap input[type=checkbox]{margin-top:2px;accent-color:var(--green);width:16px;height:16px;flex-shrink:0}
+.check-wrap label{font-size:12px;color:var(--muted);line-height:1.5}
+.check-wrap label a{color:var(--green)}
+
+/* Email verification screen */
+.verify-screen{display:none;text-align:center;padding:20px}
+.verify-screen.show{display:block}
+.verify-icon{font-size:64px;margin-bottom:16px}
+.verify-screen h3{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px}
+.verify-screen p{color:var(--muted);font-size:14px;line-height:1.6}
+.resend-btn{background:none;border:1.5px solid var(--green);color:var(--green);padding:10px 24px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;margin-top:16px}
+.resend-btn:hover{background:var(--green);color:white}
+
+/* Toast */
+.toast-bar{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--dark);color:white;padding:12px 18px;border-radius:8px;font-size:13px;animation:fadeUp .3s ease;display:flex;align-items:center;gap:8px}
+.toast.success{border-left:4px solid var(--green)}
+.toast.error{border-left:4px solid var(--red)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Responsive */
+@media(max-width:768px){
+  .auth-layout{grid-template-columns:1fr}
+  .auth-left{display:none}
+  .auth-right{padding:32px 24px;min-height:calc(100vh - 56px)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo-mark">
+    <span style="color:var(--red)">Zoe</span><span style="color:var(--gold)">Africa</span>
+  </a>
+  <a href="/" class="nav-back">← Back to marketplace</a>
+</nav>
+
+<div class="auth-layout">
+
+  <!-- Left Panel -->
+  <div class="auth-left">
+    <div class="auth-left-tag">🌱 Africa's Marketplace</div>
+    <h1>Your shop,<br>your <em>continent.</em></h1>
+    <p>Join 50,000+ buyers and sellers across 54 African countries. Buy locally, sell globally — with M-Pesa, Paystack, and Bitcoin.</p>
+    <div class="auth-features">
+      <div class="auth-feat">
+        <div class="feat-icon" style="background:rgba(245,166,35,.2)">💳</div>
+        <div class="feat-text"><strong>M-Pesa & Paystack</strong><span>Pay your way, instantly</span></div>
+      </div>
+      <div class="auth-feat">
+        <div class="feat-icon" style="background:rgba(230,51,41,.2)">🛡️</div>
+        <div class="feat-text"><strong>Buyer Protection</strong><span>Money-back guarantee on every order</span></div>
+      </div>
+      <div class="auth-feat">
+        <div class="feat-icon" style="background:rgba(255,255,255,.1)">📦</div>
+        <div class="feat-text"><strong>54 Countries</strong><span>Shop & sell across all of Africa</span></div>
+      </div>
+      <div class="auth-feat">
+        <div class="feat-icon" style="background:rgba(26,122,60,.4)">₿</div>
+        <div class="feat-text"><strong>Bitcoin Accepted</strong><span>Crypto-friendly marketplace</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="auth-right">
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab" onclick="switchTab('register')">Create Account</div>
+    </div>
+
+    <div class="toast-bar" id="toastBar"></div>
+    <div class="alert" id="alert"></div>
+
+    <!-- ── LOGIN FORM ────────────────────────────────────────────────────── -->
+    <div class="auth-form active" id="loginForm">
+      <h2>Welcome back 👋</h2>
+      <p class="sub">Sign in to your ZoeAfrica account</p>
+
+      <div class="form-group">
+        <label>Email address</label>
+        <div class="input-wrap">
+          <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <input type="password" id="login-password" placeholder="Your password" autocomplete="current-password">
+          <button class="eye-btn" type="button" onclick="togglePwd('login-password', this)">👁</button>
+        </div>
+      </div>
+
+      <a class="forgot-link" onclick="showForgot()">Forgot your password?</a>
+
+      <button class="submit-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
+
+      <div class="divider">or</div>
+      <p style="text-align:center;font-size:13px;color:var(--muted)">
+        No account? <a onclick="switchTab('register')" style="color:var(--green);cursor:pointer;font-weight:600">Create one free →</a>
+      </p>
+    </div>
+
+    <!-- ── REGISTER FORM ─────────────────────────────────────────────────── -->
+    <div class="auth-form" id="registerForm">
+      <h2>Join ZoeAfrica 🌍</h2>
+      <p class="sub">Create your free account in seconds</p>
+
+      <!-- Role selector -->
+      <div class="form-group">
+        <label>I want to</label>
+        <div class="role-grid">
+          <div class="role-card selected" id="role-buyer" onclick="selectRole('buyer')">
+            <div class="role-icon">🛍️</div>
+            <div class="role-name">Buy</div>
+            <div class="role-desc">Shop African products</div>
+          </div>
+          <div class="role-card" id="role-seller" onclick="selectRole('seller')">
+            <div class="role-icon">🏪</div>
+            <div class="role-name">Sell</div>
+            <div class="role-desc">List & sell products</div>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="reg-role" value="buyer">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full name</label>
+          <div class="input-wrap"><input type="text" id="reg-name" placeholder="Grace Akinyi"></div>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <div class="input-wrap"><input type="tel" id="reg-phone" placeholder="+254712345678"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email address</label>
+        <div class="input-wrap"><input type="email" id="reg-email" placeholder="grace@example.com" autocomplete="email"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Country</label>
+        <div class="input-wrap">
+          <select id="reg-country">
+            <option value="Kenya">🇰🇪 Kenya</option>
+            <option value="Nigeria">🇳🇬 Nigeria</option>
+            <option value="Ghana">🇬🇭 Ghana</option>
+            <option value="South Africa">🇿🇦 South Africa</option>
+            <option value="Ethiopia">🇪🇹 Ethiopia</option>
+            <option value="Tanzania">🇹🇿 Tanzania</option>
+            <option value="Uganda">🇺🇬 Uganda</option>
+            <option value="Rwanda">🇷🇼 Rwanda</option>
+            <option value="Senegal">🇸🇳 Senegal</option>
+            <option value="Egypt">🇪🇬 Egypt</option>
+            <option value="Morocco">🇲🇦 Morocco</option>
+            <option value="Other">🌍 Other African country</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" id="shopNameGroup" style="display:none">
+        <label>Shop name</label>
+        <div class="input-wrap"><input type="text" id="reg-shop" placeholder="e.g. AshantiFabrics KE"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <input type="password" id="reg-password" placeholder="Min. 6 characters" autocomplete="new-password" oninput="checkStrength(this.value)">
+          <button class="eye-btn" type="button" onclick="togglePwd('reg-password', this)">👁</button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+        <div class="strength-text" id="strengthText"></div>
+      </div>
+
+      <div class="check-wrap">
+        <input type="checkbox" id="reg-terms">
+        <label for="reg-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+      </div>
+
+      <button class="submit-btn" id="registerBtn" onclick="doRegister()">Create Free Account</button>
+    </div>
+
+    <!-- ── EMAIL VERIFY SCREEN ───────────────────────────────────────────── -->
+    <div class="verify-screen" id="verifyScreen">
+      <div class="verify-icon">📬</div>
+      <h3>Check your email!</h3>
+      <p>We sent a verification link to<br><strong id="verifyEmail"></strong></p>
+      <p style="margin-top:12px;font-size:13px">Click the link in the email to activate your account.<br>It expires in 24 hours.</p>
+      <button class="resend-btn" onclick="doResend()">Resend verification email</button>
+      <p style="margin-top:16px;font-size:12px;color:var(--muted)">Check spam/junk folder too</p>
+    </div>
+
+    <!-- ── FORGOT PASSWORD ───────────────────────────────────────────────── -->
+    <div class="auth-form" id="forgotForm">
+      <h2>Reset password 🔑</h2>
+      <p class="sub">Enter your email and we'll send a reset link</p>
+      <div class="form-group">
+        <label>Email address</label>
+        <div class="input-wrap"><input type="email" id="forgot-email" placeholder="you@example.com"></div>
+      </div>
+      <button class="submit-btn" onclick="doForgot()">Send Reset Link</button>
+      <div class="divider">or</div>
+      <p style="text-align:center;font-size:13px">
+        <a onclick="switchTab('login')" style="color:var(--green);cursor:pointer;font-weight:600">← Back to Sign In</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:5000/api";
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll(".auth-tab").forEach((t, i) =>
+    t.classList.toggle("active", (i === 0 && tab === "login") || (i === 1 && tab === "register"))
+  );
+  ["loginForm","registerForm","forgotForm"].forEach(id => {
+    document.getElementById(id).classList.remove("active");
+  });
+  document.getElementById("verifyScreen").classList.remove("show");
+  document.getElementById(tab === "login" ? "loginForm" : "registerForm").classList.add("active");
+  clearAlert();
+}
+function showForgot() {
+  document.querySelectorAll(".auth-tab").forEach(t => t.classList.remove("active"));
+  ["loginForm","registerForm","verifyScreen"].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove("active");
+    el.classList.remove("show");
+  });
+  document.getElementById("forgotForm").classList.add("active");
+}
+
+// ─── Role selector ────────────────────────────────────────────────────────────
+function selectRole(role) {
+  document.getElementById("reg-role").value = role;
+  document.getElementById("role-buyer").classList.toggle("selected", role === "buyer");
+  document.getElementById("role-seller").classList.toggle("selected", role === "seller");
+  document.getElementById("shopNameGroup").style.display = role === "seller" ? "block" : "none";
+}
+
+// ─── Password strength ────────────────────────────────────────────────────────
+function checkStrength(val) {
+  const fill = document.getElementById("strengthFill");
+  const text = document.getElementById("strengthText");
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    {pct:"20%",col:"#ef4444",label:"Very weak"},
+    {pct:"40%",col:"#f97316",label:"Weak"},
+    {pct:"60%",col:"#eab308",label:"Fair"},
+    {pct:"80%",col:"#22c55e",label:"Strong"},
+    {pct:"100%",col:"#16a34a",label:"Very strong"},
+  ];
+  const l = levels[Math.min(score,4)];
+  fill.style.width = l.pct;
+  fill.style.background = l.col;
+  text.textContent = l.label;
+  text.style.color = l.col;
+}
+
+// ─── Eye toggle ───────────────────────────────────────────────────────────────
+function togglePwd(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === "password" ? "text" : "password";
+  btn.textContent = inp.type === "password" ? "👁" : "🙈";
+}
+
+// ─── Alert ───────────────────────────────────────────────────────────────────
+function showAlert(msg, type = "error") {
+  const el = document.getElementById("alert");
+  el.className = `alert ${type} show`;
+  el.innerHTML = `<span>${type === "success" ? "✅" : "❌"}</span> ${msg}`;
+  el.scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+function clearAlert() { document.getElementById("alert").classList.remove("show"); }
+
+function setLoading(btnId, loading, label) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.textContent = loading ? "Please wait…" : label;
+}
+
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  clearAlert();
+  const email    = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value;
+  if (!email || !password) { showAlert("Please enter email and password"); return; }
+
+  setLoading("loginBtn", true, "Sign In");
+  try {
+    const res  = await fetch(`${API}/auth/login`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!data.success) { showAlert(data.error); return; }
+
+    localStorage.setItem("za_token", data.token);
+    localStorage.setItem("za_user",  JSON.stringify(data.user));
+    showAlert("Signed in! Redirecting…", "success");
+    setTimeout(() => { window.location.href = "/"; }, 1200);
+  } catch { showAlert("Network error — please try again"); }
+  finally { setLoading("loginBtn", false, "Sign In"); }
+}
+
+// ─── REGISTER ─────────────────────────────────────────────────────────────────
+async function doRegister() {
+  clearAlert();
+  const name    = document.getElementById("reg-name").value.trim();
+  const email   = document.getElementById("reg-email").value.trim();
+  const password = document.getElementById("reg-password").value;
+  const phone   = document.getElementById("reg-phone").value.trim();
+  const country = document.getElementById("reg-country").value;
+  const role    = document.getElementById("reg-role").value;
+  const shopName = document.getElementById("reg-shop").value.trim();
+  const terms   = document.getElementById("reg-terms").checked;
+
+  if (!name || !email || !password) { showAlert("Name, email and password are required"); return; }
+  if (password.length < 6) { showAlert("Password must be at least 6 characters"); return; }
+  if (!terms) { showAlert("Please accept the Terms of Service to continue"); return; }
+  if (role === "seller" && !shopName) { showAlert("Please enter your shop name"); return; }
+
+  setLoading("registerBtn", true, "Create Free Account");
+  try {
+    const res  = await fetch(`${API}/auth/register`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ name, email, password, phone, country, role, shopName }),
+    });
+    const data = await res.json();
+    if (!data.success) { showAlert(data.error); return; }
+
+    // Show verification screen
+    document.getElementById("registerForm").classList.remove("active");
+    document.getElementById("verifyEmail").textContent = email;
+    document.getElementById("verifyScreen").classList.add("show");
+    window._verifyEmail = email;
+  } catch { showAlert("Network error — please try again"); }
+  finally { setLoading("registerBtn", false, "Create Free Account"); }
+}
+
+// ─── RESEND VERIFICATION ──────────────────────────────────────────────────────
+async function doResend() {
+  try {
+    const res  = await fetch(`${API}/auth/resend-verification`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ email: window._verifyEmail }),
+    });
+    const data = await res.json();
+    showToast(data.success ? "Verification email resent! ✅" : data.error, data.success ? "success" : "error");
+  } catch { showToast("Network error", "error"); }
+}
+
+// ─── FORGOT PASSWORD ──────────────────────────────────────────────────────────
+async function doForgot() {
+  const email = document.getElementById("forgot-email").value.trim();
+  if (!email) { showAlert("Please enter your email"); return; }
+  try {
+    const res  = await fetch(`${API}/auth/forgot-password`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    showAlert(data.message || data.error, data.success ? "success" : "error");
+  } catch { showAlert("Network error"); }
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg, type="success") {
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById("toastBar").appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ─── Enter key support ────────────────────────────────────────────────────────
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  const loginActive   = document.getElementById("loginForm").classList.contains("active");
+  const registerActive = document.getElementById("registerForm").classList.contains("active");
+  if (loginActive)    doLogin();
+  if (registerActive) doRegister();
+});
+
+// ─── Check URL params (e.g. ?tab=register, or from verify redirect) ───────────
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("tab") === "register") switchTab("register");
+if (urlParams.get("verified") === "1") {
+  switchTab("login");
+  showAlert("Email verified! You can now sign in.", "success");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "folders": [
+    { "name": "🏪 ZoeAfrica Root", "path": "." },
+    { "name": "⚙️  Backend (Node.js)", "path": "backend" },
+    { "name": "🌐 Frontend (HTML)", "path": "frontend/public" },
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "liveServer.settings.multiRootWorkspaceName": "🏪 ZoeAfrica Root",
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "PKief.material-icon-theme",
+      "ritwickdey.LiveServer",
+      "mongodb.mongodb-vscode",
+      "eamodio.gitlens",
+    ],
+  },
+}

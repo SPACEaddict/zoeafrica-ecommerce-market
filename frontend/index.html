@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZoeAfrica – Africa's Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#e63329;--green:#1a7a3c;--gold:#f5a623;
+  --dark:#111827;--mid:#374151;--muted:#6b7280;
+  --light:#f4f5f7;--border:#e5e7eb;--white:#ffffff;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(0,0,0,.07);
+  --shadow-lg:0 8px 28px rgba(0,0,0,.13);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--dark);font-size:14px;min-height:100vh}
+a{text-decoration:none;color:inherit}
+img{display:block;width:100%;height:100%;object-fit:cover}
+ul{list-style:none}
+button{cursor:pointer;font-family:inherit}
+
+/* ── Top banner ── */
+.top-banner{background:var(--dark);color:#9ca3af;font-size:12px;padding:7px 0;text-align:center;letter-spacing:.3px}
+.top-banner strong{color:var(--gold)}
+
+/* ── Header ── */
+header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.header-inner{max-width:1300px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:14px}
+.logo{flex-shrink:0;display:flex;flex-direction:column;line-height:1}
+.logo-text{font-family:'Playfair Display',serif;font-weight:900;font-size:26px;letter-spacing:-1px}
+.logo-text .z{color:var(--red)}.logo-text .o{color:var(--green)}.logo-text .e{color:var(--gold)}
+.logo-text .a{color:var(--red)}.logo-text .f{color:var(--green)}.logo-text .r{color:var(--gold)}
+.logo-text .i{color:var(--red)}.logo-text .c{color:var(--dark)}.logo-text .aa{color:var(--green)}
+.logo-sub{font-size:9px;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;margin-top:-2px}
+.search-wrap{flex:1;display:flex;border:2px solid var(--dark);border-radius:7px;overflow:hidden;max-width:660px}
+.search-cat{border:none;border-right:1px solid var(--border);background:var(--light);padding:0 12px;font-size:12px;color:var(--mid);font-family:inherit;outline:none;cursor:pointer}
+.search-input{flex:1;border:none;outline:none;padding:10px 14px;font-size:14px;font-family:inherit;background:var(--white)}
+.search-btn{background:var(--red);color:#fff;border:none;padding:0 22px;font-weight:700;font-size:13px;letter-spacing:.3px;transition:background .18s}
+.search-btn:hover{background:#c4271e}
+.header-actions{display:flex;align-items:center;gap:3px;flex-shrink:0;margin-left:auto}
+.nav-btn{display:flex;flex-direction:column;align-items:center;padding:5px 10px;border-radius:7px;border:none;background:transparent;color:var(--mid);font-size:11px;gap:2px;transition:background .15s;white-space:nowrap}
+.nav-btn:hover{background:var(--light)}
+.nav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sell-btn{background:var(--green)!important;color:#fff!important;flex-direction:row!important;padding:9px 16px!important;font-weight:700;font-size:12px;gap:5px;border-radius:7px}
+.sell-btn:hover{background:#156832!important}
+.cart-wrap{position:relative}
+.cart-count{position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;font-size:9px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* ── Category nav ── */
+.cat-nav{background:var(--white);border-bottom:1px solid var(--border)}
+.cat-nav-inner{max-width:1300px;margin:0 auto;padding:0 20px;display:flex;overflow-x:auto;scrollbar-width:none}
+.cat-nav-inner::-webkit-scrollbar{display:none}
+.cat-link{padding:10px 14px;font-size:13px;font-weight:500;color:var(--mid);white-space:nowrap;border-bottom:2.5px solid transparent;cursor:pointer;transition:all .15s;border-top:none;border-left:none;border-right:none;background:none;font-family:inherit}
+.cat-link:hover,.cat-link.active{color:var(--dark);border-bottom-color:var(--red)}
+
+/* ── Layout ── */
+.main{max-width:1300px;margin:0 auto;padding:20px}
+
+/* ── Hero ── */
+.hero-grid{display:grid;grid-template-columns:1fr 310px;gap:16px;margin-bottom:22px}
+.hero-main{background:linear-gradient(140deg,#0b1e0c 0%,#1a7a3c 60%,#27a356 100%);border-radius:var(--radius);padding:44px 48px;position:relative;overflow:hidden;min-height:300px;display:flex;flex-direction:column;justify-content:center}
+.hero-main::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 80% 50%,rgba(255,255,255,.04) 0%,transparent 60%)}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#86efac;font-weight:700;margin-bottom:10px}
+.hero-title{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:12px}
+.hero-title em{color:var(--gold);font-style:normal}
+.hero-sub{color:#d1fae5;font-size:14px;margin-bottom:24px;max-width:380px;line-height:1.6}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:var(--dark);padding:11px 26px;border-radius:7px;font-weight:800;font-size:13px;border:none;transition:transform .15s,box-shadow .15s;letter-spacing:.2px}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(245,166,35,.45)}
+.btn-ghost{background:transparent;color:#fff;padding:11px 24px;border-radius:7px;font-weight:600;font-size:13px;border:2px solid rgba(255,255,255,.35);transition:border-color .15s}
+.btn-ghost:hover{border-color:#fff}
+.hero-side{display:flex;flex-direction:column;gap:14px}
+.side-card{border-radius:var(--radius);padding:24px 22px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-height:140px;position:relative;overflow:hidden;cursor:pointer}
+.side-card-1{background:linear-gradient(135deg,#7c1d1d,#e63329)}
+.side-card-2{background:linear-gradient(135deg,#1e3a5f,#2563eb)}
+.side-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:3px}
+.side-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:#fff}
+.side-cta{color:#fde68a;font-size:12px;margin-top:6px;font-weight:600}
+.side-img{position:absolute;right:0;top:0;bottom:0;width:45%;opacity:.35}
+
+/* ── Section ── */
+.section{margin-bottom:30px}
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-hd h2{font-family:'Playfair Display',serif;font-size:21px;font-weight:700}
+.see-all{color:var(--red);font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;background:none;border:none;font-family:inherit}
+.see-all:hover{text-decoration:underline}
+
+/* ── Promo strip ── */
+.promo-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.promo-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:box-shadow .15s}
+.promo-card:hover{box-shadow:var(--shadow-lg)}
+.promo-icon{font-size:26px;flex-shrink:0}
+.promo-val{font-weight:700;font-size:13px;color:var(--dark)}
+.promo-lbl{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── Category grid ── */
+.cat-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.cat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 8px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.cat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.cat-card-icon{font-size:28px;margin-bottom:6px}
+.cat-card-name{font-size:11px;font-weight:600;color:var(--mid)}
+.cat-card-count{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── Sort/Filter bar ── */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-label{font-size:13px;color:var(--muted);font-weight:500}
+.sort-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);font-size:12px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .15s;font-family:inherit}
+.sort-btn:hover,.sort-btn.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.results-count{margin-left:auto;font-size:12px;color:var(--muted)}
+
+/* ── Product grid ── */
+.product-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:13px}
+.product-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative;display:flex;flex-direction:column}
+.product-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.product-img-wrap{width:100%;aspect-ratio:1;overflow:hidden;position:relative;background:var(--light);flex-shrink:0}
+.product-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.product-card:hover .product-img-wrap img{transform:scale(1.04)}
+.product-img-wrap .skeleton{position:absolute;inset:0;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.p-badge{position:absolute;top:8px;left:8px;font-size:9px;font-weight:800;padding:3px 7px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;z-index:1}
+.p-badge.hot{background:var(--red);color:#fff}
+.p-badge.new{background:var(--green);color:#fff}
+.p-badge.deal{background:var(--gold);color:var(--dark)}
+.wish-btn{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(0,0,0,.18);font-size:15px;transition:transform .15s;z-index:1;cursor:pointer;line-height:1}
+.wish-btn:hover{transform:scale(1.2)}
+.wish-btn.active{color:var(--red)}
+.product-info{padding:10px 12px 13px;flex:1;display:flex;flex-direction:column;gap:3px}
+.product-title{font-size:13px;font-weight:500;color:var(--dark);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-seller{font-size:11px;color:var(--muted)}
+.stars{color:var(--gold);font-size:10px;letter-spacing:-1px}
+.product-price-row{display:flex;align-items:baseline;gap:7px;margin-top:4px}
+.price{font-size:17px;font-weight:800;color:var(--dark)}
+.was{font-size:11px;color:var(--muted);text-decoration:line-through}
+.saving{font-size:10px;color:var(--green);font-weight:700}
+.ship{font-size:11px;color:var(--green);margin-top:2px}
+.add-cart-btn{margin-top:8px;background:var(--dark);color:#fff;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:600;font-family:inherit;transition:background .15s;width:100%}
+.add-cart-btn:hover{background:var(--green)}
+.add-cart-btn.added{background:var(--green)}
+
+/* ── Loading skeleton cards ── */
+.skeleton-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.skel-img{aspect-ratio:1;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+.skel-line{height:12px;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;margin:10px 12px 4px}
+.skel-line.short{width:50%;margin-bottom:10px}
+
+/* ── Service cards ── */
+.service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.service-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.service-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.service-img-wrap{height:130px;overflow:hidden;background:var(--light)}
+.service-img-wrap img{width:100%;height:100%;object-fit:cover}
+.service-info{padding:12px}
+.service-title{font-weight:700;font-size:13px;margin-bottom:3px}
+.service-provider{font-size:11px;color:var(--muted);margin-bottom:5px}
+.service-rating{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--mid)}
+.service-price{font-weight:800;font-size:15px;color:var(--green);margin-top:6px}
+
+/* ── Mid banner ── */
+.mid-banner{background:linear-gradient(120deg,#1c0a00,#7c3a00,#f5a623);border-radius:var(--radius);padding:34px 44px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden}
+.mid-banner::after{content:'🌍';position:absolute;right:40px;font-size:90px;opacity:.2;pointer-events:none}
+.mid-banner h2{font-family:'Playfair Display',serif;font-size:24px;color:#fff;font-weight:900}
+.mid-banner p{color:#fde68a;margin-top:5px;font-size:13px}
+
+/* ── Stats ── */
+.stats-bar{background:var(--dark);border-radius:var(--radius);padding:26px 32px;margin-bottom:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--gold)}
+.stat-lbl{font-size:11px;color:#9ca3af;margin-top:3px}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--dark);color:#fff;padding:12px 20px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.green{border-left:4px solid var(--green)}
+
+/* ── Error state ── */
+.api-error{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:20px;text-align:center;color:#dc2626;margin:10px 0}
+.api-error small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
+
+/* ── Empty state ── */
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-state .empty-icon{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+
+/* ── Footer ── */
+footer{background:var(--dark);color:#9ca3af;margin-top:40px}
+.footer-top{max-width:1300px;margin:0 auto;padding:40px 20px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:28px}
+.footer-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:22px}
+.footer-logo .z{color:var(--red)}.footer-logo .o{color:var(--green)}.footer-logo .e{color:var(--gold)}
+.footer-desc{font-size:12px;line-height:1.8;margin-top:10px;max-width:230px}
+.pay-icons{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.pay-tag{background:#374151;border-radius:4px;padding:3px 9px;font-size:10px;color:#d1d5db;font-weight:700}
+.footer-col h4{color:#fff;font-size:13px;font-weight:700;margin-bottom:12px}
+.footer-col li{margin-bottom:8px;font-size:12px;cursor:pointer;transition:color .15s}
+.footer-col li:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid #374151;text-align:center;padding:16px;font-size:11px;color:#6b7280}
+
+/* ── Responsive ── */
+@media(max-width:1100px){.product-grid{grid-template-columns:repeat(3,1fr)}.cat-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.hero-side{flex-direction:row}.service-grid{grid-template-columns:repeat(2,1fr)}.promo-strip{grid-template-columns:repeat(2,1fr)}.footer-top{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.hero-title{font-size:26px}.product-grid{grid-template-columns:repeat(2,1fr)}.stats-bar{grid-template-columns:repeat(2,1fr)}.search-cat{display:none}.mid-banner{flex-direction:column}.mid-banner::after{display:none}.header-actions .nav-btn:not(.sell-btn):not(.cart-wrap){display:none}}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.product-card{animation:fadeUp .35s ease both}
+</style>
+</head>
+<body>
+
+<!-- Top banner -->
+<div class="top-banner">
+  🌍 Welcome to ZoeAfrica — Africa's #1 Marketplace &nbsp;·&nbsp;
+  Free shipping on orders over <strong>KES 2,000</strong> &nbsp;·&nbsp;
+  Pay with <strong>M-Pesa · PayPal · Bitcoin · Cards</strong>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <div class="logo-text">
+        <span class="z">Z</span><span class="o">o</span><span class="e">e</span><span class="a">A</span><span class="f">f</span><span class="r">r</span><span class="i">i</span><span class="c">c</span><span class="aa">a</span>
+      </div>
+      <span class="logo-sub">Africa's Marketplace</span>
+    </a>
+
+    <div class="search-wrap">
+      <select class="search-cat" id="searchCat">
+        <option>All Categories</option>
+        <option>Fashion &amp; Clothing</option>
+        <option>Electronics</option>
+        <option>Handmade &amp; Crafts</option>
+        <option>Food &amp; Groceries</option>
+        <option>Beauty &amp; Health</option>
+        <option>Home &amp; Living</option>
+        <option>Services</option>
+      </select>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search products, services, sellers...">
+      <button class="search-btn" id="searchBtn">Search</button>
+    </div>
+
+    <div class="header-actions">
+      <button class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Account
+      </button>
+      <button class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Saved
+      </button>
+      <div class="cart-wrap">
+        <button class="nav-btn" id="cartBtn">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Cart
+        </button>
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
+      <button class="nav-btn sell-btn">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Sell Now
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Category nav -->
+<nav class="cat-nav">
+  <div class="cat-nav-inner" id="catNav">
+    <button class="cat-link active" data-cat="All">All</button>
+    <button class="cat-link" data-cat="Fashion &amp; Clothing">Fashion</button>
+    <button class="cat-link" data-cat="Electronics">Electronics</button>
+    <button class="cat-link" data-cat="Handmade &amp; Crafts">Handmade &amp; Crafts</button>
+    <button class="cat-link" data-cat="Home &amp; Living">Home &amp; Living</button>
+    <button class="cat-link" data-cat="Food &amp; Groceries">Food &amp; Groceries</button>
+    <button class="cat-link" data-cat="Beauty &amp; Health">Beauty &amp; Health</button>
+    <button class="cat-link" data-cat="Art &amp; Collectibles">Art &amp; Collectibles</button>
+    <button class="cat-link" data-cat="Services">Services</button>
+  </div>
+</nav>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="hero-grid" style="margin-bottom:22px">
+    <div class="hero-main">
+      <div class="hero-eyebrow">🌱 Africa's Own Marketplace</div>
+      <h1 class="hero-title">Shop Africa.<br><em>Sell to the World.</em></h1>
+      <p class="hero-sub">Handmade crafts, fashion, electronics, food & services from 54 African nations — all in one place.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+        <button class="btn-ghost">Start Selling Free →</button>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="side-card side-card-1">
+        <div class="side-label">New Arrivals</div>
+        <div class="side-title">African Fashion Week</div>
+        <div class="side-cta">Shop the collection →</div>
+      </div>
+      <div class="side-card side-card-2">
+        <div class="side-label">⚡ Flash deals — ends tonight</div>
+        <div class="side-title">Up to 60% Off Electronics</div>
+        <div class="side-cta">See all deals →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Promo strip -->
+  <div class="promo-strip">
+    <div class="promo-card"><div class="promo-icon">🛡️</div><div><div class="promo-val">Buyer Protection</div><div class="promo-lbl">Money-back on every order</div></div></div>
+    <div class="promo-card"><div class="promo-icon">📦</div><div><div class="promo-val">Fast Delivery</div><div class="promo-lbl">Nationwide shipping across Africa</div></div></div>
+    <div class="promo-card"><div class="promo-icon">💳</div><div><div class="promo-val">M-Pesa · Bitcoin · Cards</div><div class="promo-lbl">10+ secure payment options</div></div></div>
+    <div class="promo-card"><div class="promo-icon">🌍</div><div><div class="promo-val">54 Countries</div><div class="promo-lbl">Sell locally or export globally</div></div></div>
+  </div>
+
+  <!-- Categories -->
+  <div class="section">
+    <div class="section-hd"><h2>Shop by Category</h2><button class="see-all">See all →</button></div>
+    <div class="cat-grid" id="categoryGrid">
+      <!-- Loaded from API -->
+      <div class="cat-card"><div class="cat-card-icon">👗</div><div class="cat-card-name">Fashion</div></div>
+      <div class="cat-card"><div class="cat-card-icon">📱</div><div class="cat-card-name">Electronics</div></div>
+      <div class="cat-card"><div class="cat-card-icon">🏠</div><div class="cat-card-name">Home</div></div>
+      <div class="cat-card"><div class="cat-card-icon">🎨</div><div class="cat-card-name">Handmade</div></div>
+      <div class="cat-card"><div class="cat-card-icon">🥗</div><div class="cat-card-name">Food</div></div>
+      <div class="cat-card"><div class="cat-card-icon">💄</div><div class="cat-card-name">Beauty</div></div>
+      <div class="cat-card"><div class="cat-card-icon">🚗</div><div class="cat-card-name">Motors</div></div>
+      <div class="cat-card"><div class="cat-card-icon">📚</div><div class="cat-card-name">Books</div></div>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <div class="section" id="productsSection">
+    <div class="section-hd">
+      <h2 id="productsTitle">Today's Top Picks</h2>
+      <button class="see-all" id="seeAllBtn">See all →</button>
+    </div>
+
+    <!-- Sort/Filter bar -->
+    <div class="filter-bar">
+      <span class="filter-label">Sort:</span>
+      <button class="sort-btn active" data-sort="">Best match</button>
+      <button class="sort-btn" data-sort="popular">Most popular</button>
+      <button class="sort-btn" data-sort="newest">Newest</button>
+      <button class="sort-btn" data-sort="price_asc">Price: low–high</button>
+      <button class="sort-btn" data-sort="price_desc">Price: high–low</button>
+      <button class="sort-btn" data-sort="rating">Top rated</button>
+      <span class="results-count" id="resultsCount"></span>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <!-- Skeleton placeholders -->
+      ${Array(10).fill(0).map(()=>`
+      <div class="skeleton-card">
+        <div class="skel-img"></div>
+        <div class="skel-line"></div>
+        <div class="skel-line short"></div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Mid banner -->
+  <div class="mid-banner">
+    <div>
+      <h2>Start Selling on ZoeAfrica — It's Free</h2>
+      <p>Join 50,000+ sellers across Africa. List your first product in under 5 minutes. Get paid via M-Pesa, PayPal, or Bitcoin.</p>
+    </div>
+    <button class="btn-primary" style="flex-shrink:0;white-space:nowrap;font-size:14px;padding:13px 28px">Open Your Shop →</button>
+  </div>
+
+  <!-- Services -->
+  <div class="section">
+    <div class="section-hd"><h2>Top Services Near You</h2><button class="see-all">Browse all →</button></div>
+    <div class="service-grid" id="serviceGrid">
+      <!-- loaded from API -->
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar">
+    <div><div class="stat-num">50K+</div><div class="stat-lbl">Active Sellers across Africa</div></div>
+    <div><div class="stat-num">1.2M+</div><div class="stat-lbl">Products &amp; Services listed</div></div>
+    <div><div class="stat-num">54</div><div class="stat-lbl">African countries</div></div>
+    <div><div class="stat-num">99.2%</div><div class="stat-lbl">Buyer satisfaction rate</div></div>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo"><span class="z">Zoe</span><span class="o">Afri</span><span class="e">ca</span></div>
+      <p class="footer-desc">Africa's #1 marketplace connecting buyers and sellers across 54 countries. Handmade, digital, services, and everyday products — all in one place.</p>
+      <div class="pay-icons">
+        <span class="pay-tag">M-Pesa</span><span class="pay-tag">PayPal</span>
+        <span class="pay-tag">Bitcoin</span><span class="pay-tag">Visa</span>
+        <span class="pay-tag">Mastercard</span><span class="pay-tag">Paystack</span>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Buy</h4><ul><li>Registration</li><li>Buying Help</li><li>Deals &amp; Offers</li><li>Gift Cards</li><li>Stores</li></ul></div>
+    <div class="footer-col"><h4>Sell</h4><ul><li>Start Selling</li><li>Seller Center</li><li>Listing Tips</li><li>Seller Fees</li><li>Seller Stories</li></ul></div>
+    <div class="footer-col"><h4>Help</h4><ul><li>Help Center</li><li>Contact Us</li><li>Returns Policy</li><li>Buyer Protection</li><li>Community</li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li>About ZoeAfrica</li><li>Careers</li><li>Press</li><li>Privacy Policy</li><li>Terms of Use</li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2025 ZoeAfrica Ltd. All rights reserved. &nbsp;·&nbsp; Built in Africa 🌍 &nbsp;·&nbsp; Nairobi · Lagos · Accra · Cairo · Johannesburg</div>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIG — change API_BASE to your server URL when deploying
+// ─────────────────────────────────────────────────────────────────────────────
+const API_BASE = 'http://localhost:3001/api';
+
+// Session ID for cart (persisted in localStorage)
+const SESSION_ID = localStorage.getItem('zoe_session') || (() => {
+  const id = Math.random().toString(36).slice(2) + Date.now();
+  localStorage.setItem('zoe_session', id);
+  return id;
+})();
+
+// Wishlist stored locally
+const wishlist = new Set(JSON.parse(localStorage.getItem('zoe_wishlist') || '[]'));
+function saveWishlist() { localStorage.setItem('zoe_wishlist', JSON.stringify([...wishlist])); }
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let state = { category: 'All', sort: '', q: '', cartCount: 0 };
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function fmt(n) {
+  return new Intl.NumberFormat('en-KE').format(n);
+}
+
+function pct(orig, price) {
+  if (!orig || orig <= price) return null;
+  return Math.round((1 - price/orig) * 100);
+}
+
+function stars(rating) {
+  const full  = Math.floor(rating);
+  const empty = 5 - full;
+  return '★'.repeat(full) + '☆'.repeat(empty);
+}
+
+function showToast(msg, green = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (green ? ' green' : '');
+  setTimeout(() => t.className = 'toast', 2600);
+}
+
+// ─── API fetch wrapper ────────────────────────────────────────────────────────
+async function apiFetch(path) {
+  try {
+    const res  = await fetch(API_BASE + path);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch(e) {
+    return null; // signals failure
+  }
+}
+
+// ─── Render product card ──────────────────────────────────────────────────────
+function renderProduct(p) {
+  const saved   = wishlist.has(p.id);
+  const disc    = pct(p.originalPrice, p.price);
+  const badge   = p.badge
+    ? `<span class="p-badge ${p.badge.toLowerCase()}">${p.badge}</span>`
+    : '';
+  const wasHtml = p.originalPrice
+    ? `<span class="was">KES ${fmt(p.originalPrice)}</span>`
+    : '';
+  const savHtml = disc
+    ? `<span class="saving">–${disc}%</span>`
+    : '';
+
+  return `
+  <div class="product-card" style="animation-delay:${Math.random()*0.2}s">
+    <div class="product-img-wrap">
+      <div class="skeleton" id="sk-${p.id}"></div>
+      <img src="${p.image}" alt="${p.title}"
+           onload="document.getElementById('sk-${p.id}')?.remove()"
+           onerror="this.src='https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=400&fit=crop'">
+      ${badge}
+      <button class="wish-btn ${saved?'active':''}" data-id="${p.id}" onclick="toggleWish(event,'${p.id}')">
+        ${saved ? '♥' : '♡'}
+      </button>
+    </div>
+    <div class="product-info">
+      <div class="product-title">${p.title}</div>
+      <div class="product-seller">by ${p.seller} · ${p.sellerCountry}</div>
+      <div class="stars">${stars(p.sellerRating)} <span style="color:var(--muted);font-size:10px">(${fmt(p.reviewCount)})</span></div>
+      <div class="product-price-row">
+        <span class="price">KES ${fmt(p.price)}</span>
+        ${wasHtml} ${savHtml}
+      </div>
+      <div class="ship">✓ ${p.shipping}</div>
+      <button class="add-cart-btn" data-id="${p.id}" onclick="addToCart(event,'${p.id}','${p.title.replace(/'/g,'\\')}')">
+        Add to Cart
+      </button>
+    </div>
+  </div>`;
+}
+
+// ─── Render service card ──────────────────────────────────────────────────────
+function renderService(s) {
+  return `
+  <div class="service-card">
+    <div class="service-img-wrap">
+      <img src="${s.image}" alt="${s.title}"
+           onerror="this.src='https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400&h=400&fit=crop'">
+    </div>
+    <div class="service-info">
+      <div class="service-title">${s.title}</div>
+      <div class="service-provider">by ${s.seller} · ${s.sellerCountry}</div>
+      <div class="service-rating">
+        <span class="stars" style="color:var(--gold)">${stars(s.sellerRating)}</span>
+        ${s.sellerRating} (${s.reviewCount} reviews)
+      </div>
+      <div class="service-price">From KES ${fmt(s.price)}</div>
+    </div>
+  </div>`;
+}
+
+// ─── Load products ────────────────────────────────────────────────────────────
+async function loadProducts() {
+  const grid = document.getElementById('productGrid');
+  const countEl = document.getElementById('resultsCount');
+
+  // Show skeletons
+  grid.innerHTML = Array(10).fill(0).map(() => `
+    <div class="skeleton-card">
+      <div class="skel-img"></div>
+      <div class="skel-line"></div>
+      <div class="skel-line short"></div>
+    </div>`).join('');
+
+  let url = '/listings?limit=10';
+  if (state.category && state.category !== 'All') url += `&category=${encodeURIComponent(state.category)}`;
+  if (state.sort)     url += `&sort=${state.sort}`;
+  if (state.q)        url += `&q=${encodeURIComponent(state.q)}`;
+
+  const data = await apiFetch(url);
+
+  if (!data) {
+    // API offline — fall back to embedded data
+    grid.innerHTML = FALLBACK_PRODUCTS.map(renderProduct).join('');
+    countEl.textContent = `${FALLBACK_PRODUCTS.length} items (offline mode)`;
+    return;
+  }
+
+  if (data.listings.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🔍</div>
+        <p>No listings found for "${state.q || state.category}". Try a different search.</p>
+      </div>`;
+    countEl.textContent = '0 results';
+    return;
+  }
+
+  grid.innerHTML = data.listings.map(renderProduct).join('');
+  countEl.textContent = `${data.total} listing${data.total !== 1 ? 's' : ''} found`;
+
+  // Title update
+  document.getElementById('productsTitle').textContent =
+    state.q ? `Results for "${state.q}"`
+    : state.category !== 'All' ? state.category
+    : "Today's Top Picks";
+}
+
+// ─── Load services ────────────────────────────────────────────────────────────
+async function loadServices() {
+  const grid = document.getElementById('serviceGrid');
+  const data = await apiFetch('/services');
+  if (!data) {
+    grid.innerHTML = FALLBACK_SERVICES.map(renderService).join('');
+    return;
+  }
+  grid.innerHTML = data.services.map(renderService).join('');
+}
+
+// ─── Load stats ───────────────────────────────────────────────────────────────
+async function loadStats() {
+  const data = await apiFetch('/stats');
+  if (!data) return;
+  const s = data.stats;
+  document.getElementById('statsBar').innerHTML = `
+    <div><div class="stat-num">${(s.sellers/1000).toFixed(0)}K+</div><div class="stat-lbl">Active Sellers across Africa</div></div>
+    <div><div class="stat-num">${(s.products/1000000).toFixed(1)}M+</div><div class="stat-lbl">Products &amp; Services listed</div></div>
+    <div><div class="stat-num">${s.countries}</div><div class="stat-lbl">African countries represented</div></div>
+    <div><div class="stat-num">${s.satisfaction}%</div><div class="stat-lbl">Buyer satisfaction rate</div></div>`;
+}
+
+// ─── Cart ─────────────────────────────────────────────────────────────────────
+async function loadCartCount() {
+  const data = await apiFetch(`/cart/${SESSION_ID}`);
+  const count = data ? data.count : parseInt(localStorage.getItem('zoe_cart_count') || '0');
+  state.cartCount = count;
+  document.getElementById('cartCount').textContent = count;
+}
+
+async function addToCart(e, id, title) {
+  e.stopPropagation();
+  const btn = e.currentTarget;
+  btn.textContent = '✓ Added!';
+  btn.classList.add('added');
+  setTimeout(() => { btn.textContent = 'Add to Cart'; btn.classList.remove('added'); }, 1800);
+
+  // Try API
+  const res = await fetch(API_BASE + '/cart', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId: SESSION_ID, listingId: id, quantity: 1 })
+  }).catch(() => null);
+
+  if (res && res.ok) {
+    const data = await res.json();
+    state.cartCount = data.cart.reduce((s, i) => s + i.quantity, 0);
+  } else {
+    // Offline fallback
+    state.cartCount = (state.cartCount || 0) + 1;
+    localStorage.setItem('zoe_cart_count', state.cartCount);
+  }
+
+  document.getElementById('cartCount').textContent = state.cartCount;
+  showToast(`✓ "${title.slice(0,30)}..." added to cart`, true);
+}
+
+// ─── Wishlist ─────────────────────────────────────────────────────────────────
+function toggleWish(e, id) {
+  e.stopPropagation();
+  const btn = e.currentTarget;
+  if (wishlist.has(id)) {
+    wishlist.delete(id);
+    btn.textContent = '♡';
+    btn.classList.remove('active');
+    showToast('Removed from saved items');
+  } else {
+    wishlist.add(id);
+    btn.textContent = '♥';
+    btn.classList.add('active');
+    btn.style.color = 'var(--red)';
+    showToast('❤ Saved to wishlist', true);
+  }
+  saveWishlist();
+}
+
+// ─── Sort buttons ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.sort = btn.dataset.sort;
+    loadProducts();
+  });
+});
+
+// ─── Category nav ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.cat-link').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-link').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.category = btn.dataset.cat || 'All';
+    state.q = '';
+    document.getElementById('searchInput').value = '';
+    document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+    loadProducts();
+  });
+});
+
+// ─── Search ───────────────────────────────────────────────────────────────────
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  state.q = q;
+  state.category = 'All';
+  document.querySelectorAll('.cat-link').forEach(b => b.classList.remove('active'));
+  document.querySelector('.cat-link[data-cat="All"]').classList.add('active');
+  document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+  loadProducts();
+}
+document.getElementById('searchBtn').addEventListener('click', doSearch);
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+// ─── Category cards ───────────────────────────────────────────────────────────
+document.getElementById('categoryGrid').addEventListener('click', e => {
+  const card = e.target.closest('.cat-card');
+  if (!card) return;
+  const name = card.querySelector('.cat-card-name')?.textContent;
+  const map  = { Fashion:'Fashion & Clothing', Electronics:'Electronics', Home:'Home & Living',
+                  Handmade:'Handmade & Crafts', Food:'Food & Groceries', Beauty:'Beauty & Health',
+                  Motors:'Motors & Parts', Books:'Books & Music' };
+  state.category = map[name] || name;
+  state.q = '';
+  document.querySelectorAll('.cat-link').forEach(b => b.classList.remove('active'));
+  document.querySelector('.cat-link[data-cat="All"]').classList.add('active');
+  document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+  loadProducts();
+});
+
+// ─── Fallback data (shown when API is offline) ────────────────────────────────
+const FALLBACK_PRODUCTS = [
+  { id:'1', title:'Handwoven Kente Scarf – Ghana', seller:'AshantiFabrics', sellerCountry:'Ghana', sellerRating:4.9, reviewCount:312, price:1850, originalPrice:2400, image:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop', badge:'HOT', shipping:'Free shipping' },
+  { id:'2', title:'Refurbished Samsung Galaxy A53', seller:'NairobiTech', sellerCountry:'Kenya', sellerRating:4.7, reviewCount:540, price:22500, originalPrice:28000, image:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop', badge:'DEAL', shipping:'Ships in 24 hrs' },
+  { id:'3', title:'Terracotta Pottery Vase – Nigeria', seller:'LagosArtistry', sellerCountry:'Nigeria', sellerRating:5.0, reviewCount:88, price:3200, originalPrice:null, image:'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400&h=400&fit=crop', badge:'NEW', shipping:'Worldwide shipping' },
+  { id:'4', title:'Maasai Leather Sandals – Handstitched', seller:'SavannaCraft', sellerCountry:'Kenya', sellerRating:4.8, reviewCount:226, price:4500, originalPrice:5800, image:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=400&fit=crop', badge:'HOT', shipping:'Free shipping' },
+  { id:'5', title:'Ethiopian Yirgacheffe Coffee – 1kg', seller:'AddisOrigins', sellerCountry:'Ethiopia', sellerRating:4.9, reviewCount:1240, price:1200, originalPrice:null, image:'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=400&h=400&fit=crop', badge:'NEW', shipping:'Ships cold-packed' },
+  { id:'6', title:'Djembe Drum – Hand-carved Senegal', seller:'DakarBeats', sellerCountry:'Senegal', sellerRating:4.9, reviewCount:76, price:9800, originalPrice:null, image:'https://images.unsplash.com/photo-1516663235285-845fac339ca7?w=400&h=400&fit=crop', badge:null, shipping:'Worldwide shipping' },
+  { id:'7', title:'Ankara Print Fabric – 6 Yards', seller:'AbujaFabrics', sellerCountry:'Nigeria', sellerRating:4.8, reviewCount:445, price:2100, originalPrice:2800, image:'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=400&h=400&fit=crop', badge:'DEAL', shipping:'Free shipping KE' },
+  { id:'8', title:'Organic Baobab Seed Oil – 100ml', seller:'PureSavannah', sellerCountry:'Tanzania', sellerRating:5.0, reviewCount:388, price:1650, originalPrice:null, image:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=400&fit=crop', badge:null, shipping:'Ships cold-pressed' },
+  { id:'9', title:'Batik Art Print – Signed Original', seller:'MombasaArt', sellerCountry:'Kenya', sellerRating:4.7, reviewCount:54, price:5500, originalPrice:null, image:'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=400&h=400&fit=crop', badge:null, shipping:'Rolled tube shipping' },
+  { id:'10', title:'Beaded Maasai Necklace – Kenya', seller:'BeadworkKE', sellerCountry:'Kenya', sellerRating:4.9, reviewCount:892, price:780, originalPrice:1100, image:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', badge:'DEAL', shipping:'Free shipping' },
+];
+
+const FALLBACK_SERVICES = [
+  { id:'s1', title:'Logo Design + Full Brand Kit', seller:'CreativeDen KE', sellerCountry:'Kenya', sellerRating:4.9, reviewCount:142, price:2500, image:'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop' },
+  { id:'s2', title:'Home Electrical Repairs', seller:'FixIt Nairobi', sellerCountry:'Kenya', sellerRating:4.7, reviewCount:89, price:800, image:'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=400&fit=crop' },
+  { id:'s3', title:'WordPress Website Setup', seller:'TechHub Lagos', sellerCountry:'Nigeria', sellerRating:5.0, reviewCount:67, price:8000, image:'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400&h=400&fit=crop' },
+  { id:'s4', title:'Product Photography – 10 Shots', seller:'LensAfrica Studio', sellerCountry:'Kenya', sellerRating:4.8, reviewCount:203, price:3500, image:'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop' },
+];
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+(async () => {
+  await Promise.all([ loadProducts(), loadServices(), loadStats(), loadCartCount() ]);
+})();
+</script>
+</body>
+</html>
