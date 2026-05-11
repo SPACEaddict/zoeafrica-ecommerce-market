@@ -1,53 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZoeAfrica – Africa's Marketplace</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --red:#e63329;--green:#1a7a3c;--gold:#f5a623;
-  --dark:#111827;--mid:#374151;--muted:#6b7280;
-  --light:#f9fafb;--border:#e5e7eb;--white:#ffffff;
-  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
-}
-body{font-family:'DM Sans',sans-serif;background:#f4f5f6;color:var(--dark);font-size:14px}
-a{text-decoration:none;color:inherit}img{display:block;max-width:100%}ul{list-style:none}
-
-/* Top banner */
-.top-banner{background:var(--dark);color:#9ca3af;font-size:12px;padding:6px 0;text-align:center}
-.top-banner span{color:var(--gold);font-weight:600}
-
-/* Header */
-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.header-inner{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
-.logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.logo-mark span{font-family:'Playfair Display',serif;font-weight:900;font-size:28px;line-height:1}
-.logo-sub{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-top:-4px}
-.search-wrap{flex:1;display:flex;border:2px solid var(--dark);border-radius:6px;overflow:hidden;max-width:680px}
-.search-cat{border:none;border-right:1px solid var(--border);background:var(--light);padding:0 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--mid);cursor:pointer}
-.search-input{flex:1;border:none;outline:none;padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif}
-.search-btn{background:var(--red);color:var(--white);border:none;padding:0 20px;font-weight:600;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
-.search-btn:hover{background:#c4271e}
-.header-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.nav-btn{display:flex;flex-direction:column;align-items:center;padding:4px 10px;border-radius:6px;cursor:pointer;transition:background .15s;color:var(--mid);font-size:11px;gap:2px;white-space:nowrap}
-.nav-btn:hover{background:var(--light)}
-.nav-btn svg{width:20px;height:20px}
-.nav-btn.sell-btn{background:var(--green);color:var(--white);font-weight:600;font-size:12px;flex-direction:row;padding:8px 16px;gap:6px}
-.nav-btn.sell-btn:hover{background:#156832}
-.cart-rel{position:relative;display:inline-block}
-.badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:white;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-
-/* Category nav */
-.cat-nav{background:var(--white);border-bottom:1px solid var(--border)}
-.cat-nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;overflow-x:auto;scrollbar-width:none}
-.cat-nav-inner::-webkit-scrollbar{display:none}
-.cat-link{padding:10px 14px;font-size:13px;font-weight:500;color:var(--mid);white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;cursor:pointer}
-.cat-link:hover,.cat-link.active{color:var(--dark);border-bottom-color:var(--red)}
-
-/* Main */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZoeAfrica - Africa's Marketplace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a7a3c, #f5a623);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: #f5a623;
+            color: #1a7a3c;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #e63329;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to ZoeAfrica</h1>
+        <p>Africa's premier marketplace for authentic products and services.</p>
+        <a href="https://spaceaddict.github.io/zoeafrica-ecommerce-market/index.html" class="btn">Enter Marketplace</a>
+    </div>
+</body>
+</html>
 .main{max-width:1280px;margin:0 auto;padding:20px}
 
 /* Hero */
